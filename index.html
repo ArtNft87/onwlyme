@@ -3,19 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>OwnlyMe — Your identity. Finally.</title>
+<title>Valearion — Identity Infrastructure</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 :root {
-  --green:   #0FD663;
-  --black:   #171717;
-  --dark:    #363636;
-  --light:   #EEEEEE;
-  --off:     #FAFAFA;
+  --navy:    #14213D;
+  --navy-d:  #0b1829;
+  --navy-m:  #1a2f52;
   --white:   #FFFFFF;
-  --sans:    'Plus Jakarta Sans', system-ui, sans-serif;
+  --off:     #F4F3F0;
+  --grey:    #8A8F9E;
+  --grey-l:  #C4C7D0;
+  --green:   #3DD68C;
+  --accent:  #FFFFFF;
+  --serif:   'Cormorant Garamond', Georgia, serif;
+  --sans:    'DM Sans', system-ui, sans-serif;
 }
 
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
@@ -23,44 +27,82 @@ html { scroll-behavior:smooth; }
 
 body {
   font-family: var(--sans);
-  background: var(--black);
+  background: var(--navy);
   color: var(--white);
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
 }
 
-/* ── LOGO SVG ── */
-.logo-svg { height:32px; width:auto; display:block; }
-.logo-svg-sm { height:24px; width:auto; display:block; }
-
 /* ── NAV ── */
 nav {
   position:fixed; top:0; left:0; right:0; z-index:100;
   display:flex; align-items:center; justify-content:space-between;
-  padding:0 3rem; height:68px;
-  transition:all .3s ease;
+  padding:0 3rem;
+  height:68px;
+  transition:all .35s ease;
 }
 nav.solid {
-  background:rgba(23,23,23,.96);
-  backdrop-filter:blur(16px);
+  background:rgba(11,24,41,.96);
+  backdrop-filter:blur(24px);
   border-bottom:1px solid rgba(255,255,255,.06);
 }
-.nav-links { display:flex; align-items:center; gap:2.5rem; list-style:none; }
-.nav-links a {
-  font-size:.8rem; font-weight:400;
-  color:rgba(255,255,255,.5);
-  text-decoration:none; letter-spacing:.02em;
-  transition:color .2s; cursor:pointer;
+/* Nav centre pill panel */
+.nav-centre {
+  position:absolute;
+  left:50%;
+  transform:translateX(-50%);
+  display:flex;
+  align-items:center;
 }
-.nav-links a:hover { color:#fff; }
-.nav-cta {
-  background:var(--green); color:var(--black);
-  padding:.55rem 1.4rem; font-family:var(--sans);
-  font-size:.8rem; font-weight:600; border:none;
-  cursor:pointer; letter-spacing:.01em;
-  transition:opacity .2s, transform .2s;
+.nav-pill {
+  display:flex;
+  align-items:center;
+  gap:.2rem;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:9px;
+  padding:.3rem .5rem;
+  backdrop-filter:blur(12px);
 }
-.nav-cta:hover { opacity:.88; transform:translateY(-1px); }
+.nav-logo {
+  font-family:var(--serif);
+  font-size:1.5rem;
+  font-weight:600;
+  color:#fff;
+  text-decoration:none;
+  letter-spacing:-.01em;
+  cursor:pointer;
+}
+.nav-links { display:flex; align-items:center; gap:0; list-style:none; }
+.nav-pill a {
+  font-size:.875rem;
+  font-weight:400;
+  color:rgba(255,255,255,.55);
+  text-decoration:none;
+  letter-spacing:-.01em;
+  transition:color .2s, background .2s;
+  cursor:pointer;
+  padding:.5rem 1rem;
+  border-radius:5px;
+  white-space:nowrap;
+}
+.nav-pill a:hover { color:#fff; background:rgba(255,255,255,.08); }
+.nav-pill a.active { color:#fff; background:rgba(255,255,255,.1); }
+.nav-btn {
+  background:#fff;
+  color:var(--navy);
+  padding:.55rem 1.4rem;
+  font-size:.82rem;
+  font-weight:500;
+  font-family:var(--sans);
+  border:none;
+  cursor:pointer;
+  letter-spacing:.01em;
+  border-radius:6px;
+  transition:opacity .2s, background .2s;
+}
+.nav-btn:hover { opacity:.88; }
+
 .ham { display:none; flex-direction:column; gap:5px; cursor:pointer; padding:4px; }
 .ham span { display:block; width:22px; height:1.5px; background:#fff; transition:all .3s; }
 
@@ -68,540 +110,886 @@ nav.solid {
 .page { display:none; }
 .page.active { display:block; }
 
-/* ── BUTTONS ── */
-.btn-green {
-  display:inline-flex; align-items:center; gap:.5rem;
-  background:var(--green); color:var(--black);
-  padding:.85rem 2.2rem; font-family:var(--sans);
-  font-size:.9rem; font-weight:600; border:none;
-  cursor:pointer; text-decoration:none;
-  transition:opacity .2s, transform .2s;
-  letter-spacing:.01em;
-}
-.btn-green:hover { opacity:.88; transform:translateY(-2px); }
-
-.btn-outline {
-  display:inline-flex; align-items:center; gap:.5rem;
-  background:transparent; color:#fff;
-  padding:.85rem 2.2rem; font-family:var(--sans);
-  font-size:.9rem; font-weight:400; border:1px solid rgba(255,255,255,.2);
-  cursor:pointer; text-decoration:none;
-  transition:border-color .2s, transform .2s;
-}
-.btn-outline:hover { border-color:rgba(255,255,255,.6); transform:translateY(-2px); }
-
-.btn-outline-dark {
-  display:inline-flex; align-items:center; gap:.5rem;
-  background:transparent; color:var(--black);
-  padding:.85rem 2.2rem; font-family:var(--sans);
-  font-size:.9rem; font-weight:400; border:1px solid rgba(23,23,23,.2);
-  cursor:pointer; text-decoration:none;
-  transition:border-color .2s, transform .2s;
-}
-.btn-outline-dark:hover { border-color:var(--black); transform:translateY(-2px); }
-
-.btn-group { display:flex; align-items:center; gap:1rem; flex-wrap:wrap; }
-
 /* ── HERO ── */
 .hero {
   min-height:100vh;
-  display:flex; align-items:center;
-  padding:9rem 3rem 6rem;
-  position:relative; overflow:hidden;
-  background:var(--black);
-}
-.hero-noise {
-  position:absolute; inset:0; pointer-events:none;
-  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-  opacity:.5;
-}
-.hero-glow {
-  position:absolute;
-  width:700px; height:700px;
-  background:radial-gradient(circle, rgba(15,214,99,.12) 0%, transparent 65%);
-  top:-150px; right:-150px; pointer-events:none;
-  animation:glow-pulse 10s ease-in-out infinite;
-}
-@keyframes glow-pulse {
-  0%,100% { opacity:.6; transform:scale(1); }
-  50% { opacity:1; transform:scale(1.08); }
-}
-
-.hero-inner {
-  max-width:1100px; margin:0 auto; width:100%;
-  position:relative; z-index:1;
-  display:grid; grid-template-columns:1fr 1fr;
-  gap:6rem; align-items:center;
-}
-.hero-label {
-  font-size:.72rem; font-weight:600; letter-spacing:.18em;
-  text-transform:uppercase; color:var(--green);
-  margin-bottom:2rem; display:block;
-  opacity:0; animation:fadeUp .7s ease forwards .1s;
-}
-.hero h1 {
-  font-size:clamp(3rem,5.5vw,5.5rem);
-  font-weight:700; line-height:1.06;
-  letter-spacing:-.025em; color:#fff;
-  opacity:0; animation:fadeUp .8s ease forwards .25s;
-}
-.hero h1 em { font-style:normal; color:var(--green); }
-.hero-sub {
-  margin-top:1.75rem; font-size:1.05rem;
-  line-height:1.75; color:rgba(255,255,255,.45);
-  font-weight:300; max-width:460px;
-  opacity:0; animation:fadeUp .8s ease forwards .4s;
-}
-.hero-actions {
-  margin-top:2.5rem;
-  opacity:0; animation:fadeUp .8s ease forwards .55s;
-}
-
-/* Hero right — credential card visual */
-.hero-visual {
-  display:flex; align-items:center; justify-content:center;
-  opacity:0; animation:fadeUp .9s ease forwards .4s;
-}
-.credential-card {
-  background:rgba(255,255,255,.04);
-  border:1px solid rgba(255,255,255,.1);
-  border-radius:20px;
-  padding:2.5rem;
-  width:320px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  align-items:center;
   position:relative;
   overflow:hidden;
-  backdrop-filter:blur(10px);
-  animation:card-float 6s ease-in-out infinite;
 }
-@keyframes card-float {
-  0%,100% { transform:translateY(0) rotate(-.5deg); }
-  50% { transform:translateY(-12px) rotate(.5deg); }
+
+.hero-left {
+  padding:10rem 4rem 8rem;
+  position:relative;
+  z-index:2;
 }
-.credential-card::before {
-  content:'';
-  position:absolute; top:0; left:0; right:0; height:2px;
-  background:linear-gradient(90deg, transparent, var(--green), transparent);
+.hero-right {
+  position:relative;
+  height:100vh;
+  overflow:hidden;
 }
-.card-header {
-  display:flex; align-items:center; gap:1rem;
-  margin-bottom:2rem;
+
+.hero-eyebrow {
+  font-size:.7rem;
+  font-weight:500;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,.4);
+  margin-bottom:2.5rem;
+  opacity:0;
+  animation:slideUp .8s ease forwards .15s;
 }
-.card-icon {
-  width:44px; height:44px;
-  background:var(--green);
-  border-radius:50%;
-  display:flex; align-items:center; justify-content:center;
-  flex-shrink:0;
+
+.hero h1 {
+  font-family:var(--serif);
+  font-size:clamp(3.5rem,5.5vw,6rem);
+  font-weight:500;
+  line-height:1.02;
+  letter-spacing:-.025em;
+  color:#fff;
+  opacity:0;
+  animation:slideUp .9s ease forwards .3s;
 }
-.card-title { font-size:.9rem; font-weight:600; color:#fff; }
-.card-sub { font-size:.72rem; color:rgba(255,255,255,.4); margin-top:.1rem; }
-.card-field {
-  background:rgba(255,255,255,.04);
-  border:1px solid rgba(255,255,255,.08);
-  border-radius:8px;
-  padding:.75rem 1rem;
-  margin-bottom:.75rem;
-  display:flex; align-items:center; justify-content:space-between;
+.hero h1 em { font-style:italic; font-weight:400; color:rgba(255,255,255,.6); }
+
+.hero-sub {
+  margin-top:2rem;
+  font-size:1rem;
+  line-height:1.75;
+  color:rgba(255,255,255,.45);
+  max-width:440px;
+  opacity:0;
+  animation:slideUp .9s ease forwards .5s;
 }
-.card-field:last-of-type { margin-bottom:0; }
-.field-label { font-size:.72rem; color:rgba(255,255,255,.3); }
-.field-value { font-size:.8rem; color:rgba(255,255,255,.7); font-weight:500; }
-.field-check {
-  width:18px; height:18px;
-  background:rgba(15,214,99,.15);
-  border-radius:50%;
-  display:flex; align-items:center; justify-content:center;
-  font-size:.65rem; color:var(--green);
+
+.hero-actions {
+  display:flex;
+  align-items:center;
+  gap:1.25rem;
+  margin-top:3rem;
+  opacity:0;
+  animation:slideUp .9s ease forwards .7s;
 }
-.card-cta {
-  margin-top:1.5rem;
-  background:var(--green);
-  border-radius:8px;
-  padding:1rem;
-  text-align:center;
-  font-size:.85rem; font-weight:600; color:var(--black);
+
+/* Buttons */
+.btn-solid {
+  display:inline-flex;
+  align-items:center;
+  gap:.5rem;
+  background:#fff;
+  color:var(--navy);
+  padding:.8rem 2rem;
+  font-family:var(--sans);
+  font-size:.82rem;
+  font-weight:500;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  border:none;
   cursor:pointer;
+  text-decoration:none;
+  border-radius:6px;
+  transition:opacity .2s, transform .2s;
 }
-.card-note {
-  text-align:center; font-size:.68rem;
-  color:rgba(255,255,255,.2); margin-top:.75rem;
-}
+.btn-solid:hover { opacity:.88; transform:translateY(-2px); }
 
-/* Floating badge */
-.float-badge {
+.btn-line {
+  display:inline-flex;
+  align-items:center;
+  gap:.5rem;
+  background:transparent;
+  color:#fff;
+  padding:.8rem 2rem;
+  font-family:var(--sans);
+  font-size:.82rem;
+  font-weight:400;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  border:1px solid rgba(255,255,255,.25);
+  cursor:pointer;
+  text-decoration:none;
+  border-radius:6px;
+  transition:border-color .2s, transform .2s;
+}
+.btn-line:hover { border-color:rgba(255,255,255,.7); transform:translateY(-2px); }
+
+.btn-line-dark {
+  display:inline-flex;
+  align-items:center;
+  gap:.5rem;
+  background:transparent;
+  color:var(--navy);
+  padding:.8rem 2rem;
+  font-family:var(--sans);
+  font-size:.82rem;
+  font-weight:400;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  border:1px solid rgba(20,33,61,.2);
+  cursor:pointer;
+  text-decoration:none;
+  border-radius:6px;
+  transition:border-color .2s, transform .2s;
+}
+.btn-line-dark:hover { border-color:var(--navy); transform:translateY(-2px); }
+
+/* Hero right — photo */
+.hero-photo {
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+  filter:brightness(.82);
+}
+.hero-photo-overlay {
   position:absolute;
-  background:var(--black);
-  border:1px solid rgba(255,255,255,.1);
-  border-radius:100px;
-  padding:.5rem 1rem;
-  font-size:.72rem; color:rgba(255,255,255,.6);
-  white-space:nowrap;
-  backdrop-filter:blur(10px);
+  inset:0;
+  background:linear-gradient(90deg, var(--navy) 0%, transparent 30%);
+  pointer-events:none;
 }
-.badge-1 { top:-20px; right:-30px; animation:badge-float 7s ease-in-out infinite; }
-.badge-2 { bottom:20px; left:-40px; animation:badge-float 9s ease-in-out infinite reverse; }
-@keyframes badge-float {
-  0%,100% { transform:translateY(0); }
-  50% { transform:translateY(-8px); }
+.hero-photo-caption {
+  position:absolute;
+  bottom:3rem;
+  right:3rem;
+  font-size:.68rem;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,.25);
 }
-.badge-dot { display:inline-block; width:6px; height:6px; background:var(--green); border-radius:50%; margin-right:.4rem; vertical-align:middle; }
 
-@keyframes fadeUp {
-  from { opacity:0; transform:translateY(22px); }
+@keyframes slideUp {
+  from { opacity:0; transform:translateY(28px); }
   to   { opacity:1; transform:translateY(0); }
 }
 
-/* ── HOW SECTION ── */
-.how-section {
-  background:var(--off);
-  color:var(--black);
-  padding:8rem 3rem;
+/* ── STATS ── */
+.stats-section {
+  background:var(--navy-d);
+  padding:0;
 }
-.how-inner { max-width:1100px; margin:0 auto; }
-.sec-label-dark {
-  font-size:.7rem; font-weight:600; letter-spacing:.18em;
-  text-transform:uppercase; color:var(--green);
-  margin-bottom:1.5rem; display:block;
-}
-.how-h {
-  font-size:clamp(2.2rem,3.5vw,3.5rem);
-  font-weight:700; letter-spacing:-.025em;
-  color:var(--black); line-height:1.1;
-  margin-bottom:4rem;
-}
-.steps-grid {
+.stats-strip {
   display:grid;
   grid-template-columns:repeat(4,1fr);
-  gap:1px;
-  background:rgba(23,23,23,.1);
+  border-top:1px solid rgba(255,255,255,.07);
 }
-.step-card {
+.stat {
+  padding:4.5rem 3.5rem;
+  border-right:1px solid rgba(255,255,255,.07);
+  position:relative;
+  overflow:hidden;
+  transition:background .4s;
+}
+.stat:last-child { border-right:none; }
+.stat:hover { background:rgba(255,255,255,.02); }
+.stat::after {
+  content:'';
+  position:absolute;
+  top:0; left:0; right:0;
+  height:2px;
+  background:#fff;
+  transform:scaleX(0);
+  transform-origin:left;
+  transition:transform .5s ease;
+}
+.stat:hover::after { transform:scaleX(1); }
+.stat-n {
+  font-family:var(--serif);
+  font-size:clamp(3rem,4vw,5rem);
+  font-weight:600;
+  color:#fff;
+  letter-spacing:-.03em;
+  line-height:1;
+  margin-bottom:1.25rem;
+}
+.stat-t {
+  font-size:.78rem;
+  font-weight:400;
+  color:rgba(255,255,255,.35);
+  line-height:1.65;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+}
+.stat-s {
+  font-size:.7rem;
+  color:rgba(255,255,255,.2);
+  margin-top:.5rem;
+  font-style:italic;
+}
+
+/* ── ARGUMENT ── */
+.argument-section {
   background:var(--off);
-  padding:3rem 2.5rem;
+  color:var(--navy);
+  padding:9rem 4rem;
+}
+.arg-inner {
+  max-width:1200px;
+  margin:0 auto;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8rem;
+  align-items:start;
+}
+.arg-label {
+  font-size:.7rem;
+  font-weight:500;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--grey);
+  margin-bottom:3rem;
+}
+.arg-h {
+  font-family:var(--serif);
+  font-size:clamp(2.5rem,4vw,4rem);
+  font-weight:500;
+  line-height:1.08;
+  letter-spacing:-.025em;
+  color:var(--navy);
+}
+.arg-h em { font-style:italic; font-weight:400; }
+.arg-pull {
+  font-family:var(--serif);
+  font-size:1.35rem;
+  font-weight:400;
+  font-style:italic;
+  line-height:1.65;
+  color:rgba(20,33,61,.55);
+  padding-left:2rem;
+  border-left:1px solid rgba(20,33,61,.15);
+  margin-top:3rem;
+}
+.arg-right { padding-top:4.5rem; }
+.arg-body {
+  font-size:1rem;
+  line-height:1.85;
+  color:rgba(20,33,61,.6);
+  margin-bottom:1.75rem;
+}
+.arg-callout {
+  font-family:var(--serif);
+  font-size:1.6rem;
+  font-weight:500;
+  color:var(--navy);
+  line-height:1.3;
+  letter-spacing:-.015em;
+  margin-bottom:2.5rem;
+  padding-bottom:2.5rem;
+  border-bottom:1px solid rgba(20,33,61,.1);
+}
+
+/* ── CHANGES (numbered list) ── */
+.changes-section {
+  background:var(--navy);
+  padding:9rem 4rem;
+}
+.changes-inner { max-width:1200px; margin:0 auto; }
+.changes-header {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:4rem;
+  align-items:end;
+  margin-bottom:6rem;
+  padding-bottom:4rem;
+  border-bottom:1px solid rgba(255,255,255,.07);
+}
+.changes-h {
+  font-family:var(--serif);
+  font-size:clamp(2.2rem,3.5vw,3.5rem);
+  font-weight:500;
+  line-height:1.1;
+  letter-spacing:-.02em;
+}
+.changes-sub {
+  font-size:.95rem;
+  color:rgba(255,255,255,.4);
+  line-height:1.75;
+  align-self:end;
+}
+.change-list { display:flex; flex-direction:column; }
+.change-item {
+  display:grid;
+  grid-template-columns:80px 1fr 1fr;
+  gap:3rem;
+  align-items:start;
+  padding:3rem 0;
+  border-bottom:1px solid rgba(255,255,255,.07);
+  transition:background .3s;
+  cursor:default;
+}
+.change-item:last-child { border-bottom:none; }
+.change-item:hover { background:rgba(255,255,255,.02); margin:0 -2rem; padding-left:2rem; padding-right:2rem; }
+.change-num {
+  font-family:var(--serif);
+  font-size:4rem;
+  font-weight:600;
+  color:rgba(255,255,255,.07);
+  letter-spacing:-.05em;
+  line-height:1;
+}
+.change-title {
+  font-family:var(--serif);
+  font-size:1.5rem;
+  font-weight:500;
+  color:#fff;
+  letter-spacing:-.015em;
+  padding-top:.35rem;
+}
+.change-body {
+  font-size:.9rem;
+  color:rgba(255,255,255,.38);
+  line-height:1.8;
+  padding-top:.5rem;
+}
+
+/* ── WHO ── */
+.who-section {
+  background:var(--navy-d);
+  padding:9rem 4rem;
+}
+.who-inner { max-width:1200px; margin:0 auto; }
+.who-label {
+  font-size:.7rem; letter-spacing:.18em; text-transform:uppercase;
+  color:rgba(255,255,255,.35); margin-bottom:1.5rem;
+}
+.who-h {
+  font-family:var(--serif);
+  font-size:clamp(2rem,3vw,3rem);
+  font-weight:500;
+  letter-spacing:-.02em;
+  margin-bottom:4rem;
+  max-width:600px;
+}
+.sectors {
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:1px;
+  background:rgba(255,255,255,.06);
+}
+.sector {
+  background:var(--navy-d);
+  padding:3.5rem;
+  cursor:pointer;
   transition:background .3s;
   position:relative;
   overflow:hidden;
 }
-.step-card::after {
+.sector::before {
   content:'';
-  position:absolute; bottom:0; left:0; right:0; height:3px;
-  background:var(--green);
-  transform:scaleX(0); transform-origin:left;
+  position:absolute;
+  top:0; left:0; bottom:0;
+  width:2px;
+  background:#fff;
+  transform:scaleY(0);
+  transform-origin:bottom;
   transition:transform .4s ease;
 }
-.step-card:hover { background:#fff; }
-.step-card:hover::after { transform:scaleX(1); }
-.step-num {
-  font-size:3rem; font-weight:700;
-  color:rgba(23,23,23,.07); letter-spacing:-.05em;
-  line-height:1; margin-bottom:2rem;
+.sector:hover { background:rgba(255,255,255,.04); }
+.sector:hover::before { transform:scaleY(1); }
+.sector-tag {
+  font-size:.65rem; font-weight:500; letter-spacing:.16em;
+  text-transform:uppercase; color:rgba(255,255,255,.3);
+  margin-bottom:1.25rem;
 }
-.step-card h3 { font-size:1.15rem; font-weight:600; color:var(--black); margin-bottom:.6rem; }
-.step-card p { font-size:.875rem; color:rgba(23,23,23,.5); line-height:1.7; }
+.sector h3 {
+  font-family:var(--serif);
+  font-size:1.6rem; font-weight:500;
+  color:#fff; letter-spacing:-.015em;
+  margin-bottom:1rem; line-height:1.2;
+}
+.sector p {
+  font-size:.875rem;
+  color:rgba(255,255,255,.35);
+  line-height:1.75;
+}
+.sector-arr {
+  display:inline-flex; align-items:center; gap:.5rem;
+  font-size:.75rem; color:rgba(255,255,255,.3);
+  margin-top:2rem; text-transform:uppercase; letter-spacing:.1em;
+  transition:color .2s, gap .2s;
+}
+.sector:hover .sector-arr { color:#fff; gap:.8rem; }
 
-/* ── WHY SECTION ── */
-.why-section {
-  background:var(--black);
-  padding:8rem 3rem;
-}
-.why-inner { max-width:1100px; margin:0 auto; }
-.sec-label-light {
-  font-size:.7rem; font-weight:600; letter-spacing:.18em;
-  text-transform:uppercase; color:var(--green);
-  margin-bottom:1.5rem; display:block;
-}
-.why-h {
-  font-size:clamp(2.2rem,3.5vw,3.5rem);
-  font-weight:700; letter-spacing:-.025em;
-  color:#fff; line-height:1.1;
-  margin-bottom:1rem;
-}
-.why-sub {
-  font-size:1rem; color:rgba(255,255,255,.4);
-  line-height:1.75; max-width:500px; margin-bottom:4rem;
-}
-.why-grid {
-  display:grid; grid-template-columns:1fr 1fr;
-  gap:1px; background:rgba(255,255,255,.06);
-}
-.why-card {
-  background:var(--black);
-  padding:3rem;
-  transition:background .3s;
-}
-.why-card:hover { background:rgba(255,255,255,.03); }
-.why-card-num {
-  font-size:.65rem; font-weight:700;
-  letter-spacing:.18em; text-transform:uppercase;
-  color:var(--green); margin-bottom:1.25rem;
-}
-.why-card h3 { font-size:1.1rem; font-weight:600; color:#fff; margin-bottom:.6rem; }
-.why-card p { font-size:.875rem; color:rgba(255,255,255,.38); line-height:1.75; }
-
-/* ── FOR PLATFORMS SECTION ── */
-.platforms-section {
-  background:var(--off);
-  padding:8rem 3rem;
-  color:var(--black);
-}
-.plat-inner { max-width:1100px; margin:0 auto; }
-.plat-grid {
-  display:grid; grid-template-columns:1fr 1fr;
-  gap:6rem; align-items:center;
-  margin-top:4rem;
-}
-.plat-h {
-  font-size:clamp(2rem,3vw,3rem);
-  font-weight:700; letter-spacing:-.02em;
-  color:var(--black); line-height:1.1; margin-bottom:1.5rem;
-}
-.plat-body {
-  font-size:.95rem; color:rgba(23,23,23,.6);
-  line-height:1.8; margin-bottom:1.5rem;
-}
-.plat-points { margin:2rem 0; }
-.plat-point {
-  display:flex; gap:1rem; align-items:flex-start;
-  padding:1.25rem 0;
-  border-bottom:1px solid rgba(23,23,23,.08);
-}
-.plat-point:last-child { border-bottom:none; }
-.pp-dot {
-  width:6px; height:6px;
-  background:var(--green); border-radius:50%;
-  flex-shrink:0; margin-top:.45rem;
-}
-.pp-text { font-size:.9rem; color:rgba(23,23,23,.65); line-height:1.65; }
-.pp-text strong { color:var(--black); font-weight:600; display:block; margin-bottom:.15rem; }
-.plat-right {
-  background:var(--black);
-  padding:3.5rem;
-  color:#fff;
-}
-.pr-stat {
-  margin-bottom:2.5rem;
-  padding-bottom:2.5rem;
-  border-bottom:1px solid rgba(255,255,255,.07);
-}
-.pr-stat:last-child { border-bottom:none; margin-bottom:0; padding-bottom:0; }
-.pr-num {
-  font-size:3rem; font-weight:700;
-  color:var(--green); letter-spacing:-.03em;
-  line-height:1; margin-bottom:.5rem;
-}
-.pr-label { font-size:.8rem; color:rgba(255,255,255,.4); line-height:1.5; }
-
-/* ── CTA SECTION ── */
+/* ── CTA ── */
 .cta-section {
-  background:var(--green);
-  padding:7rem 3rem;
+  background:var(--navy);
+  padding:9rem 4rem;
   text-align:center;
 }
 .cta-inner { max-width:700px; margin:0 auto; }
+.cta-kicker {
+  font-size:.7rem; letter-spacing:.2em; text-transform:uppercase;
+  color:rgba(255,255,255,.3); margin-bottom:2rem;
+}
 .cta-h {
-  font-size:clamp(2.5rem,4vw,4.5rem);
-  font-weight:700; letter-spacing:-.03em;
-  color:var(--black); line-height:1.06; margin-bottom:1.25rem;
+  font-family:var(--serif);
+  font-size:clamp(2.5rem,4vw,4rem);
+  font-weight:500;
+  letter-spacing:-.025em;
+  line-height:1.1;
+  margin-bottom:1.5rem;
 }
+.cta-h em { font-style:italic; font-weight:400; color:rgba(255,255,255,.5); }
 .cta-sub {
-  font-size:1rem; color:rgba(23,23,23,.65);
-  line-height:1.75; margin-bottom:2.5rem;
+  font-size:.95rem;
+  color:rgba(255,255,255,.38);
+  line-height:1.75;
+  margin-bottom:3rem;
 }
-.btn-black {
-  display:inline-flex; align-items:center; gap:.5rem;
-  background:var(--black); color:#fff;
-  padding:.9rem 2.4rem; font-family:var(--sans);
-  font-size:.9rem; font-weight:600;
-  border:none; cursor:pointer; text-decoration:none;
-  transition:opacity .2s, transform .2s;
-}
-.btn-black:hover { opacity:.85; transform:translateY(-2px); }
-.btn-white-outline {
-  display:inline-flex; align-items:center; gap:.5rem;
-  background:transparent; color:var(--black);
-  padding:.9rem 2.4rem; font-family:var(--sans);
-  font-size:.9rem; font-weight:500;
-  border:1.5px solid rgba(23,23,23,.3); cursor:pointer; text-decoration:none;
-  transition:border-color .2s, transform .2s;
-}
-.btn-white-outline:hover { border-color:var(--black); transform:translateY(-2px); }
+.cta-btns { display:flex; justify-content:center; gap:1rem; flex-wrap:wrap; }
 
 /* ── FOOTER ── */
 footer {
-  background:var(--black);
-  border-top:1px solid rgba(255,255,255,.07);
-  padding:3rem;
+  background:var(--navy-d);
+  border-top:1px solid rgba(255,255,255,.06);
+  padding:3.5rem 4rem;
 }
 .foot-inner {
-  max-width:1100px; margin:0 auto;
-  display:flex; align-items:center;
-  justify-content:space-between; flex-wrap:wrap; gap:2rem;
+  max-width:1200px; margin:0 auto;
+  display:flex; align-items:center; justify-content:space-between;
+  flex-wrap:wrap; gap:2rem;
+}
+.foot-logo {
+  font-family:var(--serif);
+  font-size:1.2rem; font-weight:600; color:#fff; cursor:pointer;
 }
 .foot-links { display:flex; gap:2rem; list-style:none; flex-wrap:wrap; }
 .foot-links a {
-  font-size:.78rem; color:rgba(255,255,255,.28);
-  cursor:pointer; text-decoration:none; transition:color .2s;
+  font-size:.75rem; letter-spacing:.06em; text-transform:uppercase;
+  color:rgba(255,255,255,.25); cursor:pointer; text-decoration:none;
+  transition:color .2s;
 }
 .foot-links a:hover { color:rgba(255,255,255,.6); }
 .foot-bottom {
-  max-width:1100px; margin:2rem auto 0;
+  max-width:1200px; margin:2rem auto 0;
   padding-top:2rem;
   border-top:1px solid rgba(255,255,255,.05);
-  display:flex; justify-content:space-between;
-  align-items:center; flex-wrap:wrap; gap:1rem;
-  font-size:.72rem; color:rgba(255,255,255,.18);
+  display:flex; justify-content:space-between; align-items:center;
+  flex-wrap:wrap; gap:1rem;
+  font-size:.75rem; color:rgba(255,255,255,.18);
 }
 
-/* ── PAGE HERO ── */
+/* ── PAGE HEROES ── */
 .page-hero {
-  padding:10rem 3rem 5rem;
-  background:var(--black);
-  position:relative; overflow:hidden;
+  padding:11rem 4rem 6rem;
+  background:var(--navy);
+  position:relative;
+  overflow:hidden;
+  border-bottom:1px solid rgba(255,255,255,.06);
 }
-.page-hero-glow {
+.page-hero-bg {
   position:absolute; inset:0;
-  background:radial-gradient(ellipse at 70% 50%, rgba(15,214,99,.07) 0%, transparent 60%);
-  pointer-events:none;
+  background:
+    linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+  background-size:80px 80px;
 }
-.ph-inner { max-width:1100px; margin:0 auto; position:relative; }
+.page-hero-inner { max-width:1200px; margin:0 auto; position:relative; }
 .ph-label {
-  font-size:.7rem; font-weight:600; letter-spacing:.18em;
-  text-transform:uppercase; color:var(--green);
-  margin-bottom:2rem; display:block;
+  font-size:.7rem; letter-spacing:.2em; text-transform:uppercase;
+  color:rgba(255,255,255,.35); margin-bottom:2.5rem; display:block;
 }
 .ph-h {
-  font-size:clamp(2.8rem,5vw,5rem);
-  font-weight:700; letter-spacing:-.03em;
-  line-height:1.05; max-width:700px;
+  font-family:var(--serif);
+  font-size:clamp(3rem,5vw,5.5rem);
+  font-weight:500;
+  line-height:1.04;
+  letter-spacing:-.025em;
+  max-width:800px;
 }
+.ph-h em { font-style:italic; font-weight:400; color:rgba(255,255,255,.5); }
 .ph-sub {
-  margin-top:1.75rem; font-size:1.05rem;
-  color:rgba(255,255,255,.4); line-height:1.75;
-  max-width:500px;
+  margin-top:2rem;
+  font-size:1rem;
+  line-height:1.75;
+  color:rgba(255,255,255,.38);
+  max-width:520px;
 }
 
-/* ── HOW IT WORKS PAGE ── */
-.hiw-section {
-  background:var(--off);
-  padding:7rem 3rem; color:var(--black);
+/* ── SECTION BASE ── */
+.sec { padding:8rem 4rem; }
+.sec.dark { background:var(--navy); }
+.sec.darker { background:var(--navy-d); }
+.sec.light { background:var(--off); color:var(--navy); }
+.sec-inner { max-width:1200px; margin:0 auto; }
+.sec-label {
+  font-size:.7rem; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--grey); margin-bottom:1.5rem; display:block;
 }
-.hiw-inner { max-width:1100px; margin:0 auto; }
-.step-row {
-  display:grid; grid-template-columns:80px 1fr 1fr;
-  gap:3rem; align-items:start;
-  padding:4rem 0;
-  border-bottom:1px solid rgba(23,23,23,.08);
+.sec.dark .sec-label,
+.sec.darker .sec-label { color:rgba(255,255,255,.3); }
+.sec-h {
+  font-family:var(--serif);
+  font-size:clamp(2rem,3vw,3.5rem);
+  font-weight:500;
+  letter-spacing:-.02em;
+  line-height:1.1;
+  margin-bottom:1rem;
 }
-.step-row:last-child { border-bottom:none; }
-.sr-num {
-  font-size:4rem; font-weight:700;
-  color:rgba(23,23,23,.08); letter-spacing:-.05em; line-height:1;
+.sec.dark .sec-h,
+.sec.darker .sec-h { color:#fff; }
+.sec.light .sec-h { color:var(--navy); }
+.sec-body {
+  font-size:.95rem;
+  line-height:1.85;
 }
-.sr-h { font-size:1.6rem; font-weight:700; color:var(--black); letter-spacing:-.02em; margin-bottom:.75rem; }
-.sr-body { font-size:.9rem; color:rgba(23,23,23,.55); line-height:1.8; }
-.sr-note {
-  background:var(--black); color:#fff;
-  padding:2rem; font-size:.875rem;
-  color:rgba(255,255,255,.6); line-height:1.75;
-}
-.sr-note strong { color:var(--green); display:block; margin-bottom:.25rem; font-size:.75rem; letter-spacing:.1em; text-transform:uppercase; }
+.sec.dark .sec-body,
+.sec.darker .sec-body { color:rgba(255,255,255,.4); }
+.sec.light .sec-body { color:rgba(20,33,61,.55); }
 
-/* ── FOR PLATFORMS PAGE ── */
-.fp-section {
-  background:var(--black);
-  padding:7rem 3rem;
+/* ── SOLUTIONS TABS ── */
+.sol-tabs {
+  display:flex; gap:0;
+  border-bottom:1px solid rgba(20,33,61,.1);
+  margin-bottom:5rem;
 }
-.fp-inner { max-width:1100px; margin:0 auto; }
-.fp-grid {
-  display:grid; grid-template-columns:1fr 1fr;
-  gap:1px; background:rgba(255,255,255,.06);
+.sol-tab {
+  padding:1rem 2rem;
+  font-size:.78rem; letter-spacing:.08em; text-transform:uppercase;
+  cursor:pointer; border-bottom:2px solid transparent;
+  transition:all .2s; color:rgba(20,33,61,.4); font-weight:400;
+}
+.sol-tab.active { border-bottom-color:var(--navy); color:var(--navy); font-weight:500; }
+.sol-tab:hover { color:var(--navy); }
+.sol-pane { display:none; }
+.sol-pane.active { display:grid; grid-template-columns:1fr 1fr; gap:6rem; }
+
+.sol-h {
+  font-family:var(--serif);
+  font-size:clamp(2rem,3vw,3rem);
+  font-weight:500;
+  letter-spacing:-.02em;
+  color:var(--navy);
+  margin-bottom:1.5rem;
+}
+.sol-body {
+  font-size:.95rem; line-height:1.8;
+  color:rgba(20,33,61,.55);
+  margin-bottom:2rem;
+}
+.sol-points { margin-top:1rem; }
+.sol-point {
+  padding:1.5rem 0;
+  border-bottom:1px solid rgba(20,33,61,.07);
+}
+.sol-point:last-child { border-bottom:none; }
+.sp-title {
+  font-size:.85rem; font-weight:500; color:var(--navy);
+  margin-bottom:.35rem;
+}
+.sp-body { font-size:.85rem; color:rgba(20,33,61,.5); line-height:1.65; }
+.sol-stat {
+  background:var(--navy);
+  color:#fff;
+  padding:3rem;
+  margin-bottom:1px;
+}
+.sol-stat-n {
+  font-family:var(--serif);
+  font-size:4rem; font-weight:600;
+  letter-spacing:-.03em; line-height:1;
+  margin-bottom:.75rem;
+}
+.sol-stat-t { font-size:.85rem; color:rgba(255,255,255,.45); line-height:1.6; }
+
+/* ── COMPARISON ── */
+.comp {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:1px;
+  background:rgba(20,33,61,.1);
   margin-top:4rem;
 }
-.fp-card {
-  background:var(--black);
+.comp-col { padding:3.5rem; }
+.comp-col.old { background:#f0efec; }
+.comp-col.new { background:var(--navy); color:#fff; }
+.comp-title {
+  font-size:.68rem; letter-spacing:.16em; text-transform:uppercase;
+  font-weight:500; margin-bottom:2.5rem;
+}
+.comp-col.old .comp-title { color:rgba(20,33,61,.4); }
+.comp-col.new .comp-title { color:rgba(255,255,255,.35); }
+.comp-row {
+  display:flex; gap:1rem; align-items:baseline;
+  padding:1rem 0; border-bottom:1px solid rgba(20,33,61,.07);
+}
+.comp-col.new .comp-row { border-bottom-color:rgba(255,255,255,.06); }
+.comp-row:last-child { border-bottom:none; }
+.comp-marker { font-size:.65rem; flex-shrink:0; margin-top:.15rem; }
+.comp-col.old .comp-marker { color:rgba(20,33,61,.25); }
+.comp-col.new .comp-marker { color:rgba(255,255,255,.4); }
+.comp-text { font-size:.875rem; line-height:1.6; }
+.comp-col.old .comp-text { color:rgba(20,33,61,.55); }
+.comp-col.new .comp-text { color:rgba(255,255,255,.55); }
+
+/* ── STEPS ── */
+.steps {
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:1px;
+  background:rgba(255,255,255,.06);
+  margin-top:4rem;
+}
+.step {
+  background:var(--navy);
+  padding:3rem 2.5rem;
+  transition:background .3s;
+}
+.sec.darker .step { background:var(--navy-d); }
+.step:hover { background:rgba(255,255,255,.03); }
+.step-n {
+  font-family:var(--serif);
+  font-size:3.5rem; font-weight:600;
+  color:rgba(255,255,255,.06);
+  letter-spacing:-.05em;
+  line-height:1;
+  margin-bottom:2rem;
+}
+.step h3 {
+  font-family:var(--serif);
+  font-size:1.2rem; font-weight:500;
+  color:#fff; margin-bottom:.75rem;
+}
+.step p { font-size:.85rem; color:rgba(255,255,255,.35); line-height:1.75; }
+
+/* ── INTEGRATION TIMELINE ── */
+.timeline {
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:1px;
+  background:rgba(20,33,61,.1);
+  margin-top:4rem;
+}
+.tl-step {
+  background:var(--off);
+  padding:2.5rem 2rem;
+}
+.tl-step:hover { background:#fff; }
+.tl-n {
+  font-family:var(--serif);
+  font-size:2.5rem; font-weight:600;
+  color:rgba(20,33,61,.1); letter-spacing:-.04em;
+  line-height:1; margin-bottom:1.5rem;
+}
+.tl-step h3 { font-size:1rem; font-weight:500; color:var(--navy); margin-bottom:.5rem; }
+.tl-step p { font-size:.82rem; color:rgba(20,33,61,.5); line-height:1.65; }
+
+/* ── CODE ── */
+.code {
+  background:rgba(0,0,0,.35);
+  border:1px solid rgba(255,255,255,.07);
+  padding:1.5rem;
+  margin-top:1.25rem;
+  font-family:'Courier New', monospace;
+  font-size:.78rem;
+  color:rgba(255,255,255,.5);
+  line-height:1.9;
+}
+.code .g { color:rgba(255,255,255,.8); }
+.code .d { color:rgba(255,255,255,.25); }
+
+/* ── DEV GRID ── */
+.dev-grid {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:1px;
+  background:rgba(255,255,255,.06);
+  margin-top:4rem;
+}
+.dev-card {
+  background:var(--navy);
+  padding:3rem;
+  transition:background .3s;
+}
+.dev-card:hover { background:rgba(255,255,255,.03); }
+.dev-tag {
+  font-size:.65rem; letter-spacing:.14em; text-transform:uppercase;
+  color:rgba(255,255,255,.3); margin-bottom:1rem; font-weight:500;
+}
+.dev-card h3 {
+  font-family:var(--serif);
+  font-size:1.3rem; font-weight:500;
+  color:#fff; margin-bottom:.75rem;
+}
+.dev-card p { font-size:.875rem; color:rgba(255,255,255,.35); line-height:1.75; }
+
+/* ── TEAM ── */
+.team-grid {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:1px;
+  background:rgba(20,33,61,.1);
+  margin-top:4rem;
+}
+.team-card {
+  background:var(--off);
   padding:3.5rem;
   transition:background .3s;
 }
-.fp-card:hover { background:rgba(255,255,255,.03); }
-.fp-card h3 { font-size:1.2rem; font-weight:600; color:#fff; margin-bottom:.75rem; }
-.fp-card p { font-size:.875rem; color:rgba(255,255,255,.38); line-height:1.75; }
-.fp-tag {
-  font-size:.65rem; font-weight:600; letter-spacing:.14em;
-  text-transform:uppercase; color:var(--green); margin-bottom:1rem;
+.team-card:hover { background:#fff; }
+.team-card.featured {
+  background:var(--navy);
+  color:#fff;
+  grid-column:span 2;
 }
+.team-card.featured:hover { background:var(--navy-m); }
+.team-role {
+  font-size:.65rem; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--grey); margin-bottom:.75rem; display:block;
+}
+.team-card.featured .team-role { color:rgba(255,255,255,.35); }
+.team-name {
+  font-family:var(--serif);
+  font-size:1.6rem; font-weight:500;
+  color:var(--navy); margin-bottom:1rem; letter-spacing:-.01em;
+}
+.team-card.featured .team-name { color:#fff; }
+.team-bio {
+  font-size:.875rem;
+  color:rgba(20,33,61,.55); line-height:1.75;
+}
+.team-card.featured .team-bio { color:rgba(255,255,255,.45); }
 
-/* ── CONTACT PAGE ── */
-.contact-section {
-  background:var(--black);
-  padding:7rem 3rem;
+.advisor-strip {
+  margin-top:5rem;
+  padding-top:4rem;
+  border-top:1px solid rgba(20,33,61,.08);
 }
-.contact-inner {
-  max-width:1100px; margin:0 auto;
+.adv-label {
+  font-size:.7rem; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--grey); margin-bottom:2.5rem;
+}
+.adv-grid {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:1px;
+  background:rgba(20,33,61,.08);
+}
+.adv-item {
+  background:var(--off);
+  padding:2.5rem 3rem;
+  transition:background .3s;
+}
+.adv-item:hover { background:#fff; }
+.adv-name {
+  font-family:var(--serif);
+  font-size:1.2rem; font-weight:500; color:var(--navy);
+  margin-bottom:.3rem;
+}
+.adv-title { font-size:.75rem; color:var(--grey); margin-bottom:.75rem; letter-spacing:.04em; }
+.adv-bio { font-size:.85rem; color:rgba(20,33,61,.5); line-height:1.7; }
+
+/* ── CONTACT ── */
+.contact-grid {
   display:grid; grid-template-columns:1fr 1fr;
   gap:7rem; align-items:start;
 }
 .cf-label {
-  font-size:.68rem; font-weight:600; letter-spacing:.12em;
-  text-transform:uppercase; color:rgba(255,255,255,.35);
-  margin-bottom:.6rem; display:block;
+  font-size:.68rem; letter-spacing:.14em; text-transform:uppercase;
+  color:rgba(255,255,255,.3); margin-bottom:.6rem; display:block;
 }
 .cf-input, .cf-select, .cf-ta {
   width:100%;
   background:rgba(255,255,255,.04);
   border:1px solid rgba(255,255,255,.1);
-  color:#fff; padding:.9rem 1.1rem;
-  font-family:var(--sans); font-size:.9rem;
-  margin-bottom:1.25rem; outline:none;
-  transition:border-color .2s; border-radius:0; appearance:none;
+  color:#fff;
+  padding:.9rem 1.1rem;
+  font-family:var(--sans);
+  font-size:.9rem;
+  margin-bottom:1.5rem;
+  outline:none;
+  transition:border-color .2s;
+  border-radius:0;
+  appearance:none;
 }
-.cf-select option { background:var(--black); }
-.cf-input:focus, .cf-select:focus, .cf-ta:focus { border-color:rgba(15,214,99,.5); }
+.cf-select option { background:var(--navy); }
+.cf-input:focus, .cf-select:focus, .cf-ta:focus { border-color:rgba(255,255,255,.35); }
 .cf-input::placeholder, .cf-ta::placeholder { color:rgba(255,255,255,.2); }
 .cf-ta { height:130px; resize:none; }
 .cf-submit {
-  width:100%; background:var(--green); color:var(--black);
-  padding:1rem 2rem; font-family:var(--sans);
-  font-size:.9rem; font-weight:600; border:none; cursor:pointer;
+  width:100%;
+  background:#fff;
+  color:var(--navy);
+  padding:1rem 2rem;
+  font-family:var(--sans);
+  font-size:.82rem;
+  font-weight:500;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  border:none;
+  cursor:pointer;
   transition:opacity .2s;
 }
-.cf-submit:hover { opacity:.88; }
-.form-ok {
-  display:none; background:rgba(15,214,99,.08);
-  border:1px solid rgba(15,214,99,.2);
-  padding:2rem; font-size:.9rem;
-  color:var(--green); margin-top:1rem; line-height:1.65;
-}
+.cf-submit:hover { opacity:.85; }
+.contact-info { padding-top:1rem; }
 .ci-item {
   padding:2rem 0;
   border-bottom:1px solid rgba(255,255,255,.06);
 }
 .ci-item:last-child { border-bottom:none; }
 .ci-label {
-  font-size:.65rem; font-weight:600; letter-spacing:.14em;
-  text-transform:uppercase; color:rgba(255,255,255,.3); margin-bottom:.5rem;
+  font-size:.65rem; letter-spacing:.16em; text-transform:uppercase;
+  color:rgba(255,255,255,.3); margin-bottom:.6rem;
 }
-.ci-val { font-size:1rem; color:rgba(255,255,255,.7); line-height:1.5; }
+.ci-val {
+  font-family:var(--serif);
+  font-size:1.1rem; color:rgba(255,255,255,.75); line-height:1.5;
+}
+.form-ok {
+  display:none;
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.12);
+  padding:2rem;
+  font-size:.9rem;
+  color:rgba(255,255,255,.7);
+  margin-top:1rem;
+  line-height:1.65;
+}
 
-/* ── VALEARION LINK ── */
-.valearion-link {
-  background:rgba(255,255,255,.03);
-  border-top:1px solid rgba(255,255,255,.06);
-  padding:3rem;
-  text-align:center;
+/* ── PILL STRIP ── */
+.pill-strip {
+  background:var(--navy);
 }
-.vl-text {
-  font-size:.82rem; color:rgba(255,255,255,.3);
-  margin-bottom:1rem;
+.pill-grid {
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  border-top:1px solid rgba(255,255,255,.07);
 }
-.vl-link {
-  font-size:.82rem; color:rgba(255,255,255,.5);
-  text-decoration:none; cursor:pointer;
-  transition:color .2s;
+.pill-item {
+  padding:2.5rem 2rem;
+  border-right:1px solid rgba(255,255,255,.07);
+  transition:background .3s;
 }
-.vl-link:hover { color:#fff; }
+.pill-item:last-child { border-right:none; }
+.pill-item:hover { background:rgba(255,255,255,.03); }
+.pill-num {
+  font-size:.65rem;
+  letter-spacing:.18em;
+  color:rgba(255,255,255,.2);
+  margin-bottom:.75rem;
+  font-weight:500;
+}
+.pill-title {
+  font-family:var(--serif);
+  font-size:1.15rem;
+  font-weight:500;
+  color:#fff;
+  margin-bottom:.6rem;
+  letter-spacing:-.01em;
+  line-height:1.2;
+}
+.pill-body {
+  font-size:.78rem;
+  color:rgba(255,255,255,.35);
+  line-height:1.65;
+}
 
 /* ── REVEAL ── */
-.rv { opacity:0; transform:translateY(20px); transition:opacity .7s ease, transform .7s ease; }
+.rv {
+  opacity:0;
+  transform:translateY(24px);
+  transition:opacity .75s ease, transform .75s ease;
+}
 .rv.in { opacity:1; transform:translateY(0); }
 .rv1 { transition-delay:.1s; }
 .rv2 { transition-delay:.2s; }
@@ -611,82 +999,62 @@ footer {
 /* ── MOBILE ── */
 @media (max-width:900px) {
   nav { padding:0 1.5rem; }
-  .nav-links { display:none; }
-  .nav-links.open {
+  .nav-centre { display:none; position:static; transform:none; }
+  .nav-centre.open {
     display:flex; flex-direction:column;
-    position:fixed; inset:0; background:var(--black);
-    z-index:99; justify-content:center; align-items:center; gap:2.5rem;
+    position:fixed; inset:0;
+    background:var(--navy-d);
+    z-index:99;
+    justify-content:center; align-items:center;
+    gap:2.5rem;
   }
-  .nav-links.open a { font-size:1.1rem; }
+  .nav-centre.open .nav-pill {
+    flex-direction:column;
+    background:none;
+    border:none;
+    gap:1rem;
+    padding:0;
+  }
+  .nav-centre.open a { font-size:1.2rem; padding:.6rem 1.5rem; }
   .ham { display:flex; }
-  .hero { padding:8rem 1.5rem 5rem; }
-  .hero-inner { grid-template-columns:1fr; gap:3rem; }
-  .hero-visual { display:none; }
-  .how-section, .why-section, .platforms-section, .cta-section { padding:5rem 1.5rem; }
-  .steps-grid { grid-template-columns:1fr 1fr; }
-  .why-grid { grid-template-columns:1fr; }
-  .plat-grid { grid-template-columns:1fr; gap:3rem; }
-  .page-hero { padding:9rem 1.5rem 4rem; }
-  .hiw-section, .fp-section, .contact-section { padding:5rem 1.5rem; }
-  .step-row { grid-template-columns:50px 1fr; gap:1.5rem; }
-  .sr-note { display:none; }
-  .fp-grid { grid-template-columns:1fr; }
-  .contact-inner { grid-template-columns:1fr; gap:3rem; }
-  footer { padding:2.5rem 1.5rem; }
-  .foot-inner { flex-direction:column; gap:1.5rem; }
-}
 
-/* ── PHOTO STEPS ── */
-.photo-steps {
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:1px;
-  background:rgba(23,23,23,.1);
-  margin-top:3rem;
-}
-.photo-step { overflow:hidden; }
-.photo-step-img {
-  height:280px;
-  background-size:cover;
-  background-position:center;
-  position:relative;
-  filter:grayscale(20%);
-  transition:filter .4s, transform .4s;
-}
-.photo-step:hover .photo-step-img { filter:grayscale(0%); transform:scale(1.02); }
-.ps-num {
-  position:absolute;
-  top:1.5rem; left:1.5rem;
-  background:var(--green);
-  color:var(--black);
-  width:32px; height:32px;
-  display:flex; align-items:center; justify-content:center;
-  font-size:.75rem; font-weight:700;
-  letter-spacing:.05em;
-}
-.ps-content {
-  background:#fff;
-  padding:2rem;
-}
-.ps-content h3 { font-size:1.2rem; font-weight:700; color:var(--black); margin-bottom:.5rem; }
-.ps-content p { font-size:.85rem; color:rgba(23,23,23,.55); line-height:1.65; }
+  .hero { grid-template-columns:1fr; min-height:auto; }
+  .hero-left { padding:9rem 1.75rem 4rem; }
+  .hero-right { height:60vw; }
 
-/* ── PLATFORMS PHOTO RIGHT ── */
-.plat-right-photo { overflow:hidden; }
-.prp-img {
-  height:240px;
-  background-size:cover;
-  background-position:center;
-  filter:grayscale(15%);
-  margin-bottom:1px;
-}
-.prp-stats { background:var(--black); padding:3rem; }
-.prp-stats .pr-stat { margin-bottom:2rem; padding-bottom:2rem; border-bottom:1px solid rgba(255,255,255,.07); }
-.prp-stats .pr-stat:last-child { border-bottom:none; margin-bottom:0; padding-bottom:0; }
+  .stats-strip { grid-template-columns:1fr 1fr; }
+  .stat { border-right:none; border-bottom:1px solid rgba(255,255,255,.07); }
 
-@media (max-width:900px) {
-  .photo-steps { grid-template-columns:1fr 1fr; }
-  .photo-step-img { height:200px; }
+  .arg-inner { grid-template-columns:1fr; gap:3rem; }
+  .arg-right { padding-top:0; }
+
+  .changes-header { grid-template-columns:1fr; gap:1.5rem; }
+  .change-item { grid-template-columns:50px 1fr; gap:1.5rem; }
+  .change-body { display:none; }
+
+  .sectors { grid-template-columns:1fr; }
+  .comp { grid-template-columns:1fr; }
+  .steps { grid-template-columns:1fr 1fr; }
+  .timeline { grid-template-columns:1fr 1fr; }
+  .dev-grid { grid-template-columns:1fr; }
+  .sol-pane.active { grid-template-columns:1fr; }
+  .team-grid { grid-template-columns:1fr; }
+  .team-card.featured { grid-column:span 1; }
+  .adv-grid { grid-template-columns:1fr; }
+  .contact-grid { grid-template-columns:1fr; gap:3.5rem; }
+  .pill-grid { grid-template-columns:1fr 1fr; }
+  .pill-item { border-right:none; border-bottom:1px solid rgba(255,255,255,.07); }
+  .pill-item:last-child { border-bottom:none; }
+
+  .sec { padding:5rem 1.75rem; }
+  .page-hero { padding:9rem 1.75rem 4rem; }
+  .argument-section { padding:6rem 1.75rem; }
+  .changes-section { padding:6rem 1.75rem; }
+  .who-section { padding:6rem 1.75rem; }
+  .cta-section { padding:6rem 1.75rem; }
+  footer { padding:3rem 1.75rem; }
+  .foot-inner { flex-direction:column; gap:2rem; }
+  .change-item:hover { margin:0; padding-left:0; padding-right:0; }
 }
 </style>
 </head>
@@ -694,242 +1062,149 @@ footer {
 
 <!-- NAV -->
 <nav id="nav">
-  <svg class="logo-svg" onclick="go('home')" style="cursor:pointer;" version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 972 273"><style>.a{fill:#fff}.b{fill:#0fd663}
-/* ── PHOTO STEPS ── */
-.photo-steps {
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:1px;
-  background:rgba(23,23,23,.1);
-  margin-top:3rem;
-}
-.photo-step { overflow:hidden; }
-.photo-step-img {
-  height:280px;
-  background-size:cover;
-  background-position:center;
-  position:relative;
-  filter:grayscale(20%);
-  transition:filter .4s, transform .4s;
-}
-.photo-step:hover .photo-step-img { filter:grayscale(0%); transform:scale(1.02); }
-.ps-num {
-  position:absolute;
-  top:1.5rem; left:1.5rem;
-  background:var(--green);
-  color:var(--black);
-  width:32px; height:32px;
-  display:flex; align-items:center; justify-content:center;
-  font-size:.75rem; font-weight:700;
-  letter-spacing:.05em;
-}
-.ps-content {
-  background:#fff;
-  padding:2rem;
-}
-.ps-content h3 { font-size:1.2rem; font-weight:700; color:var(--black); margin-bottom:.5rem; }
-.ps-content p { font-size:.85rem; color:rgba(23,23,23,.55); line-height:1.65; }
-
-/* ── PLATFORMS PHOTO RIGHT ── */
-.plat-right-photo { overflow:hidden; }
-.prp-img {
-  height:240px;
-  background-size:cover;
-  background-position:center;
-  filter:grayscale(15%);
-  margin-bottom:1px;
-}
-.prp-stats { background:var(--black); padding:3rem; }
-.prp-stats .pr-stat { margin-bottom:2rem; padding-bottom:2rem; border-bottom:1px solid rgba(255,255,255,.07); }
-.prp-stats .pr-stat:last-child { border-bottom:none; margin-bottom:0; padding-bottom:0; }
-
-@media (max-width:900px) {
-  .photo-steps { grid-template-columns:1fr 1fr; }
-  .photo-step-img { height:200px; }
-}
-</style><path class="a" d="m343.1 177.9q-15.9 0-28.3-7.3-12.2-7.5-19.2-20.4-7-13-7-29.8 0-16.9 7-29.8 7-13 19.2-20.4 12.2-7.4 28.1-7.4 15.9 0 28 7.4 12.3 7.4 19.3 20.4 7 12.9 7 29.8 0 16.8-7 29.8-6.8 12.9-19 20.4-12.2 7.3-28.1 7.3zm0.1-27.1q7.7 0 13.6-3.8 6.1-4 9.4-10.8 3.4-6.9 3.4-15.8 0-8.9-3.5-15.8-3.4-6.9-9.5-10.8-5.9-4-13.7-4-7.8 0-13.9 4-5.9 3.9-9.4 10.8-3.4 6.8-3.4 15.8 0 8.9 3.5 15.8 3.5 6.8 9.5 10.8 6.1 3.8 14 3.8zm109.5 25.2h-25.5l-24.7-79.6h26.7l11.5 41.7 11.6-41.7h25.7l11.2 40.4 11.9-40.4h26.7l-24.8 79.6h-25.6l-12.3-45.9zm108.9 0h-26.1v-79.6h24.7l1 9.7q3.5-5.6 8.6-8.6 5.1-3 11.2-3 8.8 0 14.6 4 5.8 3.8 8.6 11.7 2.9 8 2.9 20.3v45.5h-26.1v-40.7q0-4.7-1.1-7.5-0.8-3.1-2.7-4.6-1.8-1.6-4.5-1.8-5.5-0.3-8.3 2.7-2.8 3-2.8 9.6zm84 0h-26.1v-111.5h26.1zm34.8 33.7q-5.1 0-10.7-2-5.7-2.3-9-4.7l9.7-23q1.6 1.4 3.3 2.3 1.9 0.8 3.5 0.8 2.4 0 4.4-1.2 2.2-1.3 3.3-4.3l1.2-3.2-34.2-78.1h29.1l16.9 46.1 15.4-46.1h29l-31.2 82.5q-3.4 9-7 16-3.6 7-9.1 11-5.4 3.9-14.6 3.9z"/><path class="b" d="m778.6 176h-26.9v-111.5h29.8l24.6 39.8 24.5-39.8h29.8v111.5h-26.9v-65.9l-27.3 43.6-27.6-43.6zm133.7 1.9q-11.8 0-20.9-5.3-9.2-5.2-14.4-14.6-5.1-9.4-5.1-21.9 0-12.4 5.1-21.8 5.1-9.4 14.1-14.6 9-5.3 20.8-5.3 11.1 0 19.6 5.4 8.5 5.3 13.3 16.1 5 10.8 5 27.4h-50.9q0.8 5.9 4 9.4 3.3 3.4 8.7 3.4 4.8 0 8.3-2.4 3.6-2.6 4.5-6.2l22.9 7.8q-2.6 8.2-8.4 13.3-5.7 5-12.8 7.2-7 2.1-13.8 2.1zm-13.2-52.1h24.1q-0.7-4.5-2.6-7-1.9-2.6-4.4-3.5-2.5-1.1-5.1-1.1-2.6 0-5.1 1.1-2.4 0.9-4.3 3.5-1.9 2.5-2.6 7z"/><path fill-rule="evenodd" class="b" d="m131.9 156.7c-35.7 0-64.5-28.8-64.5-64.5 0-35.6 28.8-64.4 64.5-64.4 35.6 0 64.5 28.8 64.5 64.4 0 35.7-28.9 64.5-64.5 64.5z"/><path fill-rule="evenodd" class="b" d="m132.3 241c-61 0-110.3-16.3-110.3-36.3 0-20.1 49.3-36.3 110.3-36.3 60.9 0 110.2 16.2 110.2 36.3 0 20-49.3 36.3-110.2 36.3z"/><path fill-rule="evenodd" class="a" d="m151.3 86.4c-7.1 0-12.8-5.8-12.8-12.8 0-7.1 5.7-12.9 12.8-12.9 7.1 0 12.8 5.8 12.8 12.9 0 7-5.7 12.8-12.8 12.8z"/></svg>
-  <ul class="nav-links" id="navLinks">
-    <li><a onclick="go('how')">How it works</a></li>
-    <li><a onclick="go('platforms')">For platforms</a></li>
-    <li><a onclick="go('contact')">Contact</a></li>
-    <button class="nav-cta" onclick="go('contact')">Get started</button>
-  </ul>
+  <span class="nav-logo" onclick="go('home')">Valearion</span>
+  <div class="nav-centre" id="navLinks">
+    <div class="nav-pill">
+      <a onclick="go('solutions')" data-p="solutions">Solutions</a>
+      <a onclick="go('works')" data-p="works">How it works</a>
+      <a onclick="go('ownlyme')" data-p="ownlyme">OwnlyMe</a>
+      <a onclick="go('devs')" data-p="devs">Developers</a>
+      <a onclick="go('about')" data-p="about">About</a>
+    </div>
+  </div>
+  <button class="nav-btn" onclick="go('contact')">Talk to us</button>
   <div class="ham" id="ham" onclick="toggleNav()">
     <span></span><span></span><span></span>
   </div>
 </nav>
 
 
-<!-- ════════════ HOME ════════ -->
+<!-- ══════════════════════════════════ HOME ══ -->
 <div class="page active" id="page-home">
 
+  <!-- HERO -->
   <section class="hero">
-    <div class="hero-noise"></div>
-    <div class="hero-glow"></div>
-    <div class="hero-photo" style="position:absolute;inset:0;z-index:0;background:url('https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=1400&q=80') center/cover no-repeat;opacity:0.08;pointer-events:none;"></div>
-    <div class="hero-inner">
-      <div>
-        <span class="hero-label">Your identity. Finally.</span>
-        <h1>Prove what<br>they need.<br><em>Keep the rest.</em></h1>
-        <p class="hero-sub">Verify once. Use everywhere. Nothing shared but the answer they asked for.</p>
-        <div class="hero-actions">
-          <div class="btn-group">
-            <button class="btn-green" onclick="go('contact')">Get started — it's free</button>
-            <button class="btn-outline" onclick="go('how')">See how it works</button>
-          </div>
-        </div>
+    <div class="hero-left">
+      <p class="hero-eyebrow">Identity Infrastructure · B2B · B2B2C</p>
+      <h1>Verified proof.<br>No data stored.<br><em>No liability created.</em></h1>
+      <p class="hero-sub">Identity infrastructure that doesn't need to hold your data to work. Built for regulated platforms that need compliance without the liability that comes with the old model.</p>
+      <div class="hero-actions">
+        <button class="btn-solid" onclick="go('works')">See how it works</button>
+        <button class="btn-line" onclick="go('contact')">Talk to us</button>
       </div>
+    </div>
+    <div class="hero-right">
+      <img class="hero-photo"
+        src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=1200&fit=crop&auto=format"
+        alt="People in a business environment"
+        loading="eager">
+      <div class="hero-photo-overlay"></div>
+      <div class="hero-photo-caption">B2B · B2B2C · March 2026</div>
+    </div>
+  </section>
 
-      <div class="hero-visual">
-        <div style="position:relative;">
-          <div class="credential-card">
-            <div class="card-header">
-              <div class="card-icon">
-                <svg width="22" height="22" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" fill="#171717" d="m248.8 297.4c-75.8 0-137.1-61.4-137.1-137.2 0-75.9 61.3-137.2 137.1-137.2 75.9 0 137.2 61.3 137.2 137.2 0 75.8-61.3 137.2-137.2 137.2z"/><path fill-rule="evenodd" fill="#171717" d="m249.6 476.6c-129.7 0-234.6-34.5-234.6-77.1 0-42.7 104.9-77.2 234.6-77.2 129.7 0 234.6 34.5 234.6 77.2 0 42.6-104.9 77.1-234.6 77.1z"/><path fill-rule="evenodd" fill="#fff" d="m290.1 147.7c-15 0-27.2-12.2-27.2-27.3 0-15.1 12.2-27.3 27.2-27.3 15.1 0 27.3 12.2 27.3 27.3 0 15.1-12.2 27.3-27.3 27.3z"/></svg>
-              </div>
-              <div>
-                <div class="card-title">OwnlyMe Credential</div>
-                <div class="card-sub">Verified · Portable · Private</div>
-              </div>
-            </div>
-            <div class="card-field">
-              <span class="field-label">Age verified</span>
-              <div style="display:flex;align-items:center;gap:.5rem;">
-                <span class="field-value">18+</span>
-                <div class="field-check">✓</div>
-              </div>
-            </div>
-            <div class="card-field">
-              <span class="field-label">Identity</span>
-              <div style="display:flex;align-items:center;gap:.5rem;">
-                <span class="field-value">Confirmed</span>
-                <div class="field-check">✓</div>
-              </div>
-            </div>
-            <div class="card-field">
-              <span class="field-label">Data shared</span>
-              <div style="display:flex;align-items:center;gap:.5rem;">
-                <span class="field-value" style="color:var(--green);">Nothing</span>
-                <div class="field-check">✓</div>
-              </div>
-            </div>
-            <div class="card-cta">Tap to verify →</div>
-            <div class="card-note">Credential stays on your device. Always.</div>
-          </div>
-          <div class="float-badge badge-1"><span class="badge-dot"></span>Verified in 2 seconds</div>
-          <div class="float-badge badge-2"><span class="badge-dot"></span>Zero data stored</div>
-        </div>
+  <!-- STATS -->
+  <section class="stats-section">
+    <div class="stats-strip">
+      <div class="stat rv">
+        <div class="stat-n">$15–$45</div>
+        <div class="stat-t">Per KYC + AML event</div>
+        <div class="stat-s">Same user. Re-verified. Every platform.</div>
+      </div>
+      <div class="stat rv rv1">
+        <div class="stat-n">€4.3B</div>
+        <div class="stat-t">GDPR fines issued in 2023</div>
+        <div class="stat-s">For data institutions were "required" to collect.</div>
+      </div>
+      <div class="stat rv rv2">
+        <div class="stat-n">$485B</div>
+        <div class="stat-t">Lost to financial fraud in 2023</div>
+        <div class="stat-s">Verification didn't stop it.</div>
+      </div>
+      <div class="stat rv rv3">
+        <div class="stat-n">40%+</div>
+        <div class="stat-t">Users abandon KYC mid-flow</div>
+        <div class="stat-s">They don't come back.</div>
       </div>
     </div>
   </section>
 
-  <!-- HOW -->
-  <section class="how-section">
-    <div class="how-inner">
-      <span class="sec-label-dark rv">How it works</span>
-      <h2 class="how-h rv">Beautifully simple.<br>Four steps. That's it.</h2>
-      <div class="photo-steps rv">
-        <div class="photo-step">
-          <div class="photo-step-img" style="background-image:url('https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=800&q=80');">
-            <div class="ps-num">01</div>
-          </div>
-          <div class="ps-content">
-            <h3>Scan.</h3>
-            <p>Your ID. Once. That credential lives on your device — not ours, not anyone else's.</p>
-          </div>
-        </div>
-        <div class="photo-step">
-          <div class="photo-step-img" style="background-image:url('https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=800&q=80');">
-            <div class="ps-num">02</div>
-          </div>
-          <div class="ps-content">
-            <h3>Tap.</h3>
-            <p>A platform asks. You approve exactly what they need. Nothing more is shared.</p>
-          </div>
-        </div>
-        <div class="photo-step">
-          <div class="photo-step-img" style="background-image:url('https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&q=80');">
-            <div class="ps-num">03</div>
-          </div>
-          <div class="ps-content">
-            <h3>Only the answer.</h3>
-            <p>Not your name. Not your face. Just — yes. That is all they get.</p>
-          </div>
-        </div>
-        <div class="photo-step">
-          <div class="photo-step-img" style="background-image:url('https://images.unsplash.com/photo-1499996860823-5214fcc65f8f?w=800&q=80');">
-            <div class="ps-num">04</div>
-          </div>
-          <div class="ps-content">
-            <h3>Yours. Always.</h3>
-            <p>On your device. In your hands. One tap everywhere after this. No starting over.</p>
-          </div>
-        </div>
+  <!-- ARGUMENT -->
+  <section class="argument-section">
+    <div class="arg-inner">
+      <div class="rv">
+        <p class="arg-label">The problem</p>
+        <h2 class="arg-h">Every KYC check<br>creates a record.<br><em>Every record is a liability.</em></h2>
+        <p class="arg-pull">The architecture creates the problem. Valearion removes the architecture.</p>
       </div>
-      <div class="btn-group rv" style="margin-top:3rem;">
-        <button class="btn-green" onclick="go('how')">Full breakdown</button>
-        <button class="btn-outline-dark" onclick="go('contact')">Get started free</button>
+      <div class="arg-right rv rv2">
+        <p class="arg-callout">Valearion doesn't improve the old model. It removes the need for it.</p>
+        <p class="arg-body">Every platform stores data it doesn't need. Every stored record is a target. You're paying $15–$45 per check to re-verify users you've already verified — then carrying the liability of everything you collected.</p>
+        <p class="arg-body">This isn't a vendor problem. It's an architecture problem. The compliance stack wasn't designed to protect you. It was designed to collect.</p>
       </div>
     </div>
   </section>
 
-  <!-- WHY -->
-  <section class="why-section" style="position:relative; overflow:hidden;">
-    <div style="position:absolute;inset:0;background:url('https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=1600&q=80') center/cover no-repeat;opacity:0.07;pointer-events:none;z-index:0;"></div>
-    <div class="why-inner" style="position:relative;z-index:1;">
-      <span class="sec-label-light rv">Why it matters</span>
-      <h2 class="why-h rv">You've already changed<br>your browser. Your messages.<br>Your search engine.</h2>
-      <p class="why-sub rv">Your identity was always next. OwnlyMe is how you complete the picture.</p>
-      <div class="why-grid rv">
-        <div class="why-card">
-          <div class="why-card-num">01</div>
-          <h3>Private by design</h3>
-          <p>The platform gets a yes or no. Nothing more. Your data never leaves your device — the answer travels, not the file.</p>
-        </div>
-        <div class="why-card">
-          <div class="why-card-num">02</div>
-          <h3>Verify once. Use everywhere.</h3>
-          <p>One credential. Every integrated platform. No re-scanning. No re-uploading. No starting over. Ever.</p>
-        </div>
-        <div class="why-card">
-          <div class="why-card-num">03</div>
-          <h3>Nothing stored. Nowhere.</h3>
-          <p>Not on our servers. Not on the platform's servers. Anchored on-chain as a W3C verifiable credential. Only you hold it.</p>
-        </div>
-        <div class="why-card">
-          <div class="why-card-num">04</div>
-          <h3>Free. Always.</h3>
-          <p>OwnlyMe is free for every user. No premium tier for privacy. No subscription for your own identity. No exceptions.</p>
-        </div>
+  <!-- WHAT CHANGES -->
+  <section class="pill-strip">
+    <div class="pill-grid">
+      <div class="pill-item rv">
+        <div class="pill-num">01</div>
+        <div class="pill-title">No data held</div>
+        <div class="pill-body">Institutions get the compliance signal. Not the file.</div>
+      </div>
+      <div class="pill-item rv rv1">
+        <div class="pill-num">02</div>
+        <div class="pill-title">Cost drops</div>
+        <div class="pill-body">$1–5 first onboard. $0.25 per pulse after.</div>
+      </div>
+      <div class="pill-item rv rv2">
+        <div class="pill-num">03</div>
+        <div class="pill-title">Zero drop-off</div>
+        <div class="pill-body">Verified users click through in one step. No form. No wait.</div>
+      </div>
+      <div class="pill-item rv rv3">
+        <div class="pill-num">04</div>
+        <div class="pill-title">No breach surface</div>
+        <div class="pill-body">Nothing to leak. Nothing to take. No fines to pay.</div>
+      </div>
+      <div class="pill-item rv rv4">
+        <div class="pill-num">05</div>
+        <div class="pill-title">Drop-in SDK</div>
+        <div class="pill-body">One engineer. Under a week. No infrastructure rebuild.</div>
       </div>
     </div>
   </section>
 
-  <!-- PLATFORMS PREVIEW -->
-  <section class="platforms-section">
-    <div class="plat-inner">
-      <span class="sec-label-dark rv">For platforms</span>
-      <div class="plat-grid">
-        <div class="rv">
-          <h2 class="plat-h">Your users are tired<br>of being asked.</h2>
-          <p class="plat-body">Every verification step you add is a moment where users leave and don't come back. OwnlyMe eliminates that for returning users.</p>
-          <p class="plat-body">Drop-in SDK. Zero data stored on your side. $0.25 per verification pulse after first onboard.</p>
-          <div class="btn-group" style="margin-top:2rem;">
-            <button class="btn-green" onclick="go('platforms')">Learn more</button>
-          </div>
+  <!-- WHO -->
+  <section class="who-section">
+    <div class="who-inner">
+      <p class="who-label rv">Who it's for</p>
+      <h2 class="who-h rv">Built for platforms operating under real compliance pressure.</h2>
+      <div class="sectors rv">
+        <div class="sector" onclick="goSolution('gaming')">
+          <div class="sector-tag">Gaming</div>
+          <h3>Gaming platforms</h3>
+          <p>KYC mandated. AML tracked. Age verified. Users retained. Pilot contracts signed Q2 2026. Pilots live Q3 2026 across 2,500+ platforms under a signed consortium.</p>
+          <span class="sector-arr">Explore &#8594;</span>
         </div>
-        <div class="plat-right-photo rv rv2">
-          <div class="prp-img" style="background-image:url('https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=900&q=80');"></div>
-          <div class="prp-stats">
-            <div class="pr-stat">
-              <div class="pr-num">40%+</div>
-              <div class="pr-label">Users abandon verification mid-flow. They don't come back.</div>
-            </div>
-            <div class="pr-stat">
-              <div class="pr-num">1 click</div>
-              <div class="pr-label">For every returning verified user. No drop-off.</div>
-            </div>
-          </div>
+        <div class="sector" onclick="goSolution('fintech')">
+          <div class="sector-tag">Financial services</div>
+          <h3>Fintechs and banks</h3>
+          <p>Every obligation met. Every liability stopped at the verification result. eIDAS 2.0 aligned. Nothing carried forward.</p>
+          <span class="sector-arr">Explore &#8594;</span>
+        </div>
+        <div class="sector" onclick="goSolution('age')">
+          <div class="sector-tag">Age-gated</div>
+          <h3>Age-gated platforms</h3>
+          <p>Online Safety Act. Digital Services Act. KOSA. The mandates are already live. The infrastructure is ready.</p>
+          <span class="sector-arr">Explore &#8594;</span>
+        </div>
+        <div class="sector" onclick="goSolution('gov')">
+          <div class="sector-tag">Public sector</div>
+          <h3>Government and sovereign</h3>
+          <p>National digital identity programmes. Social benefit distribution. Privacy-preserving at scale. Active conversations in Bolivia and Puerto Rico.</p>
+          <span class="sector-arr">Explore &#8594;</span>
         </div>
       </div>
     </div>
@@ -938,402 +1213,549 @@ footer {
   <!-- CTA -->
   <section class="cta-section rv">
     <div class="cta-inner">
-      <h2 class="cta-h">Your identity.<br>Finally.</h2>
-      <p class="cta-sub">Free for every user. No exceptions. Verify once and you're done.</p>
-      <div class="btn-group" style="justify-content:center;">
-        <button class="btn-black" onclick="go('contact')">Get OwnlyMe — it's free</button>
-        <button class="btn-white-outline" onclick="go('how')">See how it works</button>
+      <p class="cta-kicker">Next step</p>
+      <h2 class="cta-h">See what this looks like<br><em>for your platform.</em></h2>
+      <p class="cta-sub">We'll walk you through the integration, the cost comparison against your current stack, and what going live in Q3 2026 actually requires.</p>
+      <div class="cta-btns">
+        <button class="btn-solid" onclick="go('contact')">Request a demo</button>
+        <button class="btn-line" onclick="go('contact')">Talk to us</button>
       </div>
     </div>
   </section>
 
-  <div class="valearion-link">
-    <p class="vl-text">A Valearion product</p>
-    <a class="vl-link" href="https://valearion.com" target="_blank">valearion.com — Identity infrastructure for regulated platforms →</a>
-  </div>
-
   <footer>
     <div class="foot-inner">
-      <svg class="logo-svg-sm" onclick="go('home')" style="cursor:pointer;" version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 972 273"><style>.a{fill:#fff}.b{fill:#0fd663}
-/* ── PHOTO STEPS ── */
-.photo-steps {
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:1px;
-  background:rgba(23,23,23,.1);
-  margin-top:3rem;
-}
-.photo-step { overflow:hidden; }
-.photo-step-img {
-  height:280px;
-  background-size:cover;
-  background-position:center;
-  position:relative;
-  filter:grayscale(20%);
-  transition:filter .4s, transform .4s;
-}
-.photo-step:hover .photo-step-img { filter:grayscale(0%); transform:scale(1.02); }
-.ps-num {
-  position:absolute;
-  top:1.5rem; left:1.5rem;
-  background:var(--green);
-  color:var(--black);
-  width:32px; height:32px;
-  display:flex; align-items:center; justify-content:center;
-  font-size:.75rem; font-weight:700;
-  letter-spacing:.05em;
-}
-.ps-content {
-  background:#fff;
-  padding:2rem;
-}
-.ps-content h3 { font-size:1.2rem; font-weight:700; color:var(--black); margin-bottom:.5rem; }
-.ps-content p { font-size:.85rem; color:rgba(23,23,23,.55); line-height:1.65; }
-
-/* ── PLATFORMS PHOTO RIGHT ── */
-.plat-right-photo { overflow:hidden; }
-.prp-img {
-  height:240px;
-  background-size:cover;
-  background-position:center;
-  filter:grayscale(15%);
-  margin-bottom:1px;
-}
-.prp-stats { background:var(--black); padding:3rem; }
-.prp-stats .pr-stat { margin-bottom:2rem; padding-bottom:2rem; border-bottom:1px solid rgba(255,255,255,.07); }
-.prp-stats .pr-stat:last-child { border-bottom:none; margin-bottom:0; padding-bottom:0; }
-
-@media (max-width:900px) {
-  .photo-steps { grid-template-columns:1fr 1fr; }
-  .photo-step-img { height:200px; }
-}
-</style><path class="a" d="m343.1 177.9q-15.9 0-28.3-7.3-12.2-7.5-19.2-20.4-7-13-7-29.8 0-16.9 7-29.8 7-13 19.2-20.4 12.2-7.4 28.1-7.4 15.9 0 28 7.4 12.3 7.4 19.3 20.4 7 12.9 7 29.8 0 16.8-7 29.8-6.8 12.9-19 20.4-12.2 7.3-28.1 7.3zm0.1-27.1q7.7 0 13.6-3.8 6.1-4 9.4-10.8 3.4-6.9 3.4-15.8 0-8.9-3.5-15.8-3.4-6.9-9.5-10.8-5.9-4-13.7-4-7.8 0-13.9 4-5.9 3.9-9.4 10.8-3.4 6.8-3.4 15.8 0 8.9 3.5 15.8 3.5 6.8 9.5 10.8 6.1 3.8 14 3.8zm109.5 25.2h-25.5l-24.7-79.6h26.7l11.5 41.7 11.6-41.7h25.7l11.2 40.4 11.9-40.4h26.7l-24.8 79.6h-25.6l-12.3-45.9zm108.9 0h-26.1v-79.6h24.7l1 9.7q3.5-5.6 8.6-8.6 5.1-3 11.2-3 8.8 0 14.6 4 5.8 3.8 8.6 11.7 2.9 8 2.9 20.3v45.5h-26.1v-40.7q0-4.7-1.1-7.5-0.8-3.1-2.7-4.6-1.8-1.6-4.5-1.8-5.5-0.3-8.3 2.7-2.8 3-2.8 9.6zm84 0h-26.1v-111.5h26.1zm34.8 33.7q-5.1 0-10.7-2-5.7-2.3-9-4.7l9.7-23q1.6 1.4 3.3 2.3 1.9 0.8 3.5 0.8 2.4 0 4.4-1.2 2.2-1.3 3.3-4.3l1.2-3.2-34.2-78.1h29.1l16.9 46.1 15.4-46.1h29l-31.2 82.5q-3.4 9-7 16-3.6 7-9.1 11-5.4 3.9-14.6 3.9z"/><path class="b" d="m778.6 176h-26.9v-111.5h29.8l24.6 39.8 24.5-39.8h29.8v111.5h-26.9v-65.9l-27.3 43.6-27.6-43.6zm133.7 1.9q-11.8 0-20.9-5.3-9.2-5.2-14.4-14.6-5.1-9.4-5.1-21.9 0-12.4 5.1-21.8 5.1-9.4 14.1-14.6 9-5.3 20.8-5.3 11.1 0 19.6 5.4 8.5 5.3 13.3 16.1 5 10.8 5 27.4h-50.9q0.8 5.9 4 9.4 3.3 3.4 8.7 3.4 4.8 0 8.3-2.4 3.6-2.6 4.5-6.2l22.9 7.8q-2.6 8.2-8.4 13.3-5.7 5-12.8 7.2-7 2.1-13.8 2.1zm-13.2-52.1h24.1q-0.7-4.5-2.6-7-1.9-2.6-4.4-3.5-2.5-1.1-5.1-1.1-2.6 0-5.1 1.1-2.4 0.9-4.3 3.5-1.9 2.5-2.6 7z"/><path fill-rule="evenodd" class="b" d="m131.9 156.7c-35.7 0-64.5-28.8-64.5-64.5 0-35.6 28.8-64.4 64.5-64.4 35.6 0 64.5 28.8 64.5 64.4 0 35.7-28.9 64.5-64.5 64.5z"/><path fill-rule="evenodd" class="b" d="m132.3 241c-61 0-110.3-16.3-110.3-36.3 0-20.1 49.3-36.3 110.3-36.3 60.9 0 110.2 16.2 110.2 36.3 0 20-49.3 36.3-110.2 36.3z"/><path fill-rule="evenodd" class="a" d="m151.3 86.4c-7.1 0-12.8-5.8-12.8-12.8 0-7.1 5.7-12.9 12.8-12.9 7.1 0 12.8 5.8 12.8 12.9 0 7-5.7 12.8-12.8 12.8z"/></svg>
+      <span class="foot-logo" onclick="go('home')">Valearion</span>
       <ul class="foot-links">
-        <li><a onclick="go('how')">How it works</a></li>
-        <li><a onclick="go('platforms')">For platforms</a></li>
+        <li><a onclick="go('solutions')">Solutions</a></li>
+        <li><a onclick="go('works')">How it works</a></li>
+        <li><a onclick="go('ownlyme')">OwnlyMe</a></li>
+        <li><a onclick="go('devs')">Developers</a></li>
+        <li><a onclick="go('about')">About</a></li>
         <li><a onclick="go('contact')">Contact</a></li>
-        <li><a href="https://valearion.com" target="_blank">Valearion</a></li>
       </ul>
     </div>
     <div class="foot-bottom">
-      <span>Your identity. Finally.</span>
-      <span>© OwnlyMe 2026 · Privacy Policy · Terms</span>
+      <span>Identity infrastructure that doesn't need to hold your data to work.</span>
+      <span>© Valearion 2026 · Privacy Policy · Terms</span>
     </div>
   </footer>
 </div>
 
 
-<!-- ════════════ HOW IT WORKS ════════ -->
-<div class="page" id="page-how">
+<!-- ════════════════ SOLUTIONS ════════ -->
+<div class="page" id="page-solutions">
   <div class="page-hero">
-    <div class="page-hero-glow"></div>
-    <div class="ph-inner">
+    <div class="page-hero-bg"></div>
+    <div class="page-hero-inner">
+      <span class="ph-label">Solutions</span>
+      <h1 class="ph-h">Built for your<br><em>compliance reality.</em></h1>
+      <p class="ph-sub">The mandates are live. The deadlines are real. The infrastructure is ready.</p>
+    </div>
+  </div>
+
+  <section class="sec light">
+    <div class="sec-inner">
+      <div class="sol-tabs">
+        <div class="sol-tab active" onclick="solTab('gaming',this)">Gaming</div>
+        <div class="sol-tab" onclick="solTab('fintech',this)">Financial services</div>
+        <div class="sol-tab" onclick="solTab('age',this)">Age-gated</div>
+        <div class="sol-tab" onclick="solTab('gov',this)">Government</div>
+      </div>
+
+      <div class="sol-pane active" id="sp-gaming">
+        <div>
+          <span class="sec-label">Gaming</span>
+          <h2 class="sol-h">KYC mandated. AML required.<br>Users dropping off.</h2>
+          <p class="sol-body">Gaming operators are caught between tightening regulation and user experience. Every verification step costs you users and costs you money. Valearion solves both at once.</p>
+          <button class="btn-solid" style="background:var(--navy); color:#fff; margin-top:1.5rem;" onclick="go('contact')">Talk to us about gaming</button>
+          <div class="sol-points">
+            <div class="sol-point"><div class="sp-title">Age verification without the passport</div><div class="sp-body">Prove a user meets the threshold. No document copy stored anywhere in your stack.</div></div>
+            <div class="sol-point"><div class="sp-title">AML tracking without the liability</div><div class="sp-body">Continuous compliance signals. No data custodianship created.</div></div>
+            <div class="sol-point"><div class="sp-title">Re-verification at $0.25</div><div class="sp-body">Returning users click through. The $15–$45 cost becomes a one-time event.</div></div>
+            <div class="sol-point"><div class="sp-title">Drop-in SDK</div><div class="sp-body">No infrastructure rebuild. Live in days. Works alongside existing stacks.</div></div>
+          </div>
+        </div>
+        <div>
+          <div class="sol-stat"><div class="sol-stat-n">2,500+</div><div class="sol-stat-t">Platforms under a signed consortium LOI. Pilot contracts signed Q2 2026. Pilots live Q3 2026.</div></div>
+          <div class="sol-stat" style="margin-top:1px;"><div class="sol-stat-n">$0.25</div><div class="sol-stat-t">Per re-verification. After the first onboard at $1–$5. Legacy charges $15–$45 every time.</div></div>
+        </div>
+      </div>
+
+      <div class="sol-pane" id="sp-fintech">
+        <div>
+          <span class="sec-label">Financial services</span>
+          <h2 class="sol-h">Every obligation met.<br>No file carried forward.</h2>
+          <p class="sol-body">The KYC obligation is regulatory. The data liability is structural. Valearion separates them. You meet the first without creating the second.</p>
+          <button class="btn-solid" style="background:var(--navy); color:#fff; margin-top:1.5rem;" onclick="go('contact')">Talk to us</button>
+          <div class="sol-points">
+            <div class="sol-point"><div class="sp-title">KYC without custodianship</div><div class="sp-body">Verified result passed. Document never stored. Compliance met. Liability stopped.</div></div>
+            <div class="sol-point"><div class="sp-title">AML screening on every pulse</div><div class="sp-body">Continuous monitoring without continuous data collection.</div></div>
+            <div class="sol-point"><div class="sp-title">Cross-border without re-verification</div><div class="sp-body">Verified once. Works across every integrated operator without re-verification.</div></div>
+            <div class="sol-point"><div class="sp-title">eIDAS 2.0 aligned</div><div class="sp-body">Built to the wallet standard. Ready for the EU mandate end-2026.</div></div>
+          </div>
+        </div>
+        <div>
+          <div class="sol-stat"><div class="sol-stat-n">€4.3B</div><div class="sol-stat-t">GDPR fines issued in 2023 for data that should never have been stored.</div></div>
+          <div class="sol-stat" style="margin-top:1px;"><div class="sol-stat-n">450M+</div><div class="sol-stat-t">EU citizens covered by the eIDAS 2.0 digital identity mandate. Compliance window: end-2026.</div></div>
+        </div>
+      </div>
+
+      <div class="sol-pane" id="sp-age">
+        <div>
+          <span class="sec-label">Age-gated platforms</span>
+          <h2 class="sol-h">The mandates are live.<br>The question is when you act.</h2>
+          <p class="sol-body">Online Safety Act. Digital Services Act. KOSA. These aren't future legislation. They are current obligations with active enforcement and escalating penalties.</p>
+          <button class="btn-solid" style="background:var(--navy); color:#fff; margin-top:1.5rem;" onclick="go('contact')">Talk to us</button>
+          <div class="sol-points">
+            <div class="sol-point"><div class="sp-title">Age verified. Not age profiled.</div><div class="sp-body">Prove over 18. Share nothing else. The user's identity stays theirs.</div></div>
+            <div class="sol-point"><div class="sp-title">Zero friction for verified users</div><div class="sp-body">One click if they've already been through OwnlyMe. No repeat ask.</div></div>
+            <div class="sol-point"><div class="sp-title">Compliant across jurisdictions</div><div class="sp-body">UK, EU, US. Different mandates. One integration.</div></div>
+          </div>
+        </div>
+        <div>
+          <div class="sol-stat"><div class="sol-stat-n">2%</div><div class="sol-stat-t">Of global annual revenue. The maximum fine for non-compliance under DSA enforcement.</div></div>
+        </div>
+      </div>
+
+      <div class="sol-pane" id="sp-gov">
+        <div>
+          <span class="sec-label">Government and public sector</span>
+          <h2 class="sol-h">Sovereign identity.<br>Privacy-preserving.<br>Portable.</h2>
+          <p class="sol-body">National digital identity programmes need infrastructure built for privacy by design, not compliance by afterthought. Valearion is designed for that standard.</p>
+          <button class="btn-solid" style="background:var(--navy); color:#fff; margin-top:1.5rem;" onclick="go('contact')">Talk to us</button>
+          <div class="sol-points">
+            <div class="sol-point"><div class="sp-title">Citizen identity at scale</div><div class="sp-body">Social benefit distribution, government services, digital access — verified without centralised data risk.</div></div>
+            <div class="sol-point"><div class="sp-title">Cross-border portability</div><div class="sp-body">Credentials that work across integrated services without re-verification at each boundary.</div></div>
+            <div class="sol-point"><div class="sp-title">Active conversations</div><div class="sp-body">Bolivia and Puerto Rico. Sovereign identity for social benefit distribution at national scale — 15M+ citizens.</div></div>
+          </div>
+        </div>
+        <div>
+          <div class="sol-stat"><div class="sol-stat-n">15M+</div><div class="sol-stat-t">Citizens covered in active government conversations. Bolivia and Puerto Rico.</div></div>
+          <div class="sol-stat" style="margin-top:1px;"><div class="sol-stat-n">450M</div><div class="sol-stat-t">EU citizens covered by the eIDAS 2.0 Digital Identity Wallet mandate. End of 2026.</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-section rv">
+    <div class="cta-inner">
+      <h2 class="cta-h">Ready to move?</h2>
+      <p class="cta-sub">Cost comparison. Integration timeline. What going live in Q3 2026 actually requires.</p>
+      <div class="cta-btns">
+        <button class="btn-solid" onclick="go('contact')">Request a demo</button>
+        <button class="btn-line" onclick="go('contact')">Talk to us</button>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="foot-inner">
+      <span class="foot-logo" onclick="go('home')">Valearion</span>
+      <ul class="foot-links">
+        <li><a onclick="go('solutions')">Solutions</a></li>
+        <li><a onclick="go('works')">How it works</a></li>
+        <li><a onclick="go('ownlyme')">OwnlyMe</a></li>
+        <li><a onclick="go('devs')">Developers</a></li>
+        <li><a onclick="go('about')">About</a></li>
+        <li><a onclick="go('contact')">Contact</a></li>
+      </ul>
+    </div>
+    <div class="foot-bottom">
+      <span>Identity infrastructure that doesn't need to hold your data to work.</span>
+      <span>© Valearion 2026</span>
+    </div>
+  </footer>
+</div>
+
+
+<!-- ════════════════ HOW IT WORKS ════ -->
+<div class="page" id="page-works">
+  <div class="page-hero">
+    <div class="page-hero-bg"></div>
+    <div class="page-hero-inner">
       <span class="ph-label">How it works</span>
-      <h1 class="ph-h">Four steps.<br>That's the whole thing.</h1>
-      <p class="ph-sub">No long form. No document uploaded to a database. No waiting. Scan once and you're done — everywhere.</p>
+      <h1 class="ph-h">One proof.<br>Nothing stored.<br><em>Nothing inherited.</em></h1>
+      <p class="ph-sub">The architecture is different. Not the interface, not the feature set — the model.</p>
     </div>
   </div>
 
-  <section class="hiw-section">
-    <div class="hiw-inner">
-      <div class="step-row rv">
-        <div class="sr-num">01</div>
-        <div>
-          <div class="sr-h">Scan.</div>
-          <p class="sr-body">Your ID. Once. Confirm that it's you. The OwnlyMe app or SDK guides you through a quick scan. Takes under a minute. That credential is then cryptographically secured and stored on your device — not on our servers, not on any platform's database. Nowhere except with you.</p>
+  <section class="sec light">
+    <div class="sec-inner">
+      <span class="sec-label rv">The comparison</span>
+      <h2 class="sec-h rv">What you're running now<br>versus what replaces it.</h2>
+      <div class="comp rv">
+        <div class="comp-col old">
+          <div class="comp-title">Legacy model · $15–$45 per event</div>
+          <div class="comp-row"><span class="comp-marker">—</span><span class="comp-text">Platform collects full document from user</span></div>
+          <div class="comp-row"><span class="comp-marker">—</span><span class="comp-text">Data stored in platform database indefinitely</span></div>
+          <div class="comp-row"><span class="comp-marker">—</span><span class="comp-text">Same user re-verified on every platform</span></div>
+          <div class="comp-row"><span class="comp-marker">—</span><span class="comp-text">Breach surface created and maintained</span></div>
+          <div class="comp-row"><span class="comp-marker">—</span><span class="comp-text">Operator liable for all stored data</span></div>
+          <div class="comp-row"><span class="comp-marker">—</span><span class="comp-text">40%+ of users abandon at verification</span></div>
         </div>
-        <div class="sr-note">
-          <strong>What happens to your data</strong>
-          Nothing is uploaded or stored anywhere. The scan happens on your device. Only the verified credential is kept — and only by you.
-        </div>
-      </div>
-      <div class="step-row rv">
-        <div class="sr-num">02</div>
-        <div>
-          <div class="sr-h">Tap.</div>
-          <p class="sr-body">Any platform integrated with OwnlyMe will ask you to verify. You see a single approval prompt — it tells you exactly what they're asking for. Age. Identity status. KYC compliance. You tap to approve. Only what you approved is shared. Nothing more is taken.</p>
-        </div>
-        <div class="sr-note">
-          <strong>You're in control</strong>
-          You see every request before approving it. You can decline. The platform gets the answer to their specific question — not your full profile.
-        </div>
-      </div>
-      <div class="step-row rv">
-        <div class="sr-num">03</div>
-        <div>
-          <div class="sr-h">Only the answer.</div>
-          <p class="sr-body">The platform receives a verified signal. It confirms what they needed to know. It reveals nothing else. Not your name. Not your face. Not your date of birth unless that was specifically what was requested. Not your address. The credential architecture means the answer is verifiable without the underlying data ever leaving your device.</p>
-        </div>
-        <div class="sr-note">
-          <strong>How that works</strong>
-          Your credential stays on your device. When a platform asks, it gets only the answer to what it asked — nothing else is sent, nothing else is stored.
-        </div>
-      </div>
-      <div class="step-row rv">
-        <div class="sr-num">04</div>
-        <div>
-          <div class="sr-h">Yours. Always.</div>
-          <p class="sr-body">Your credential lives on your device. Anchored on-chain as a W3C verifiable credential. Every platform you use after this — one tap. No re-scanning. No re-uploading. No starting over. The credential works anywhere OwnlyMe is integrated. It's yours for life.</p>
-        </div>
-        <div class="sr-note">
-          <strong>Where it's stored</strong>
-          On your device only. Backed by blockchain attestation. If you lose your phone, credential recovery is available through the app.
+        <div class="comp-col new">
+          <div class="comp-title">Valearion · $1–5 first, $0.25 after</div>
+          <div class="comp-row"><span class="comp-marker">+</span><span class="comp-text">User verifies once via OwnlyMe or SDK</span></div>
+          <div class="comp-row"><span class="comp-marker">+</span><span class="comp-text">Credential stays on user's device only</span></div>
+          <div class="comp-row"><span class="comp-marker">+</span><span class="comp-text">One click for any integrated platform</span></div>
+          <div class="comp-row"><span class="comp-marker">+</span><span class="comp-text">Zero data stored. Zero breach surface.</span></div>
+          <div class="comp-row"><span class="comp-marker">+</span><span class="comp-text">Operator receives result only. No liability.</span></div>
+          <div class="comp-row"><span class="comp-marker">+</span><span class="comp-text">Returning users: one click. No drop-off.</span></div>
         </div>
       </div>
     </div>
   </section>
 
-  <section class="cta-section rv">
-    <div class="cta-inner">
-      <h2 class="cta-h">Simple enough?</h2>
-      <p class="cta-sub">Free for every user. Always. Get started in under a minute.</p>
-      <div class="btn-group" style="justify-content:center;">
-        <button class="btn-black" onclick="go('contact')">Get OwnlyMe — it's free</button>
+  <section class="sec darker">
+    <div class="sec-inner">
+      <span class="sec-label rv">The flow</span>
+      <h2 class="sec-h rv">Step by step.</h2>
+      <div class="steps rv">
+        <div class="step"><div class="step-n">01</div><h3>User verifies</h3><p>OwnlyMe app, SDK embedded in your platform, or privacy sign-on. The user scans their ID once. That credential is stored on their device — nowhere else.</p></div>
+        <div class="step"><div class="step-n">02</div><h3>Proof generated</h3><p>A verified signal confirms what needs confirming — age, identity, status. Only the answer travels. No underlying document is exposed.</p></div>
+        <div class="step"><div class="step-n">03</div><h3>Signal routed</h3><p>Valearion routes the compliance signal to your platform. Not the passport. Not the selfie. The answer your compliance obligation requires. That is all you receive.</p></div>
+        <div class="step"><div class="step-n">04</div><h3>Result received</h3><p>Verified or not. Binary. Clean. You met your compliance obligation. You inherited nothing. The user's credential is anchored on-chain as a W3C verifiable credential.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec light">
+    <div class="sec-inner">
+      <span class="sec-label rv">Integration</span>
+      <h2 class="sec-h rv">Drop-in. Live in days.</h2>
+      <div class="timeline rv">
+        <div class="tl-step"><div class="tl-n">01</div><h3>API keys</h3><p>Sandbox credentials issued same day. Start testing immediately. No procurement required to begin.</p></div>
+        <div class="tl-step"><div class="tl-n">02</div><h3>SDK install</h3><p>One install. Drop into your onboarding flow. Works alongside your current stack.</p></div>
+        <div class="tl-step"><div class="tl-n">03</div><h3>Configure claims</h3><p>Select what your platform needs to verify. Age, KYC status, AML. Nothing more is shared.</p></div>
+        <div class="tl-step"><div class="tl-n">04</div><h3>Go live</h3><p>Production keys. Webhook config. Typically under one week, end to end.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-section">
+    <div class="cta-inner rv">
+      <h2 class="cta-h">Ready to see it<br><em>for your platform?</em></h2>
+      <div class="cta-btns" style="margin-top:2.5rem;">
+        <button class="btn-solid" onclick="go('contact')">Request a demo</button>
+        <button class="btn-line" onclick="go('devs')">Developer docs</button>
       </div>
     </div>
   </section>
 
   <footer>
     <div class="foot-inner">
-      <svg class="logo-svg-sm" onclick="go('home')" style="cursor:pointer;" version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 972 273"><style>.a{fill:#fff}.b{fill:#0fd663}
-/* ── PHOTO STEPS ── */
-.photo-steps {
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:1px;
-  background:rgba(23,23,23,.1);
-  margin-top:3rem;
-}
-.photo-step { overflow:hidden; }
-.photo-step-img {
-  height:280px;
-  background-size:cover;
-  background-position:center;
-  position:relative;
-  filter:grayscale(20%);
-  transition:filter .4s, transform .4s;
-}
-.photo-step:hover .photo-step-img { filter:grayscale(0%); transform:scale(1.02); }
-.ps-num {
-  position:absolute;
-  top:1.5rem; left:1.5rem;
-  background:var(--green);
-  color:var(--black);
-  width:32px; height:32px;
-  display:flex; align-items:center; justify-content:center;
-  font-size:.75rem; font-weight:700;
-  letter-spacing:.05em;
-}
-.ps-content {
-  background:#fff;
-  padding:2rem;
-}
-.ps-content h3 { font-size:1.2rem; font-weight:700; color:var(--black); margin-bottom:.5rem; }
-.ps-content p { font-size:.85rem; color:rgba(23,23,23,.55); line-height:1.65; }
-
-/* ── PLATFORMS PHOTO RIGHT ── */
-.plat-right-photo { overflow:hidden; }
-.prp-img {
-  height:240px;
-  background-size:cover;
-  background-position:center;
-  filter:grayscale(15%);
-  margin-bottom:1px;
-}
-.prp-stats { background:var(--black); padding:3rem; }
-.prp-stats .pr-stat { margin-bottom:2rem; padding-bottom:2rem; border-bottom:1px solid rgba(255,255,255,.07); }
-.prp-stats .pr-stat:last-child { border-bottom:none; margin-bottom:0; padding-bottom:0; }
-
-@media (max-width:900px) {
-  .photo-steps { grid-template-columns:1fr 1fr; }
-  .photo-step-img { height:200px; }
-}
-</style><path class="a" d="m343.1 177.9q-15.9 0-28.3-7.3-12.2-7.5-19.2-20.4-7-13-7-29.8 0-16.9 7-29.8 7-13 19.2-20.4 12.2-7.4 28.1-7.4 15.9 0 28 7.4 12.3 7.4 19.3 20.4 7 12.9 7 29.8 0 16.8-7 29.8-6.8 12.9-19 20.4-12.2 7.3-28.1 7.3zm0.1-27.1q7.7 0 13.6-3.8 6.1-4 9.4-10.8 3.4-6.9 3.4-15.8 0-8.9-3.5-15.8-3.4-6.9-9.5-10.8-5.9-4-13.7-4-7.8 0-13.9 4-5.9 3.9-9.4 10.8-3.4 6.8-3.4 15.8 0 8.9 3.5 15.8 3.5 6.8 9.5 10.8 6.1 3.8 14 3.8zm109.5 25.2h-25.5l-24.7-79.6h26.7l11.5 41.7 11.6-41.7h25.7l11.2 40.4 11.9-40.4h26.7l-24.8 79.6h-25.6l-12.3-45.9zm108.9 0h-26.1v-79.6h24.7l1 9.7q3.5-5.6 8.6-8.6 5.1-3 11.2-3 8.8 0 14.6 4 5.8 3.8 8.6 11.7 2.9 8 2.9 20.3v45.5h-26.1v-40.7q0-4.7-1.1-7.5-0.8-3.1-2.7-4.6-1.8-1.6-4.5-1.8-5.5-0.3-8.3 2.7-2.8 3-2.8 9.6zm84 0h-26.1v-111.5h26.1zm34.8 33.7q-5.1 0-10.7-2-5.7-2.3-9-4.7l9.7-23q1.6 1.4 3.3 2.3 1.9 0.8 3.5 0.8 2.4 0 4.4-1.2 2.2-1.3 3.3-4.3l1.2-3.2-34.2-78.1h29.1l16.9 46.1 15.4-46.1h29l-31.2 82.5q-3.4 9-7 16-3.6 7-9.1 11-5.4 3.9-14.6 3.9z"/><path class="b" d="m778.6 176h-26.9v-111.5h29.8l24.6 39.8 24.5-39.8h29.8v111.5h-26.9v-65.9l-27.3 43.6-27.6-43.6zm133.7 1.9q-11.8 0-20.9-5.3-9.2-5.2-14.4-14.6-5.1-9.4-5.1-21.9 0-12.4 5.1-21.8 5.1-9.4 14.1-14.6 9-5.3 20.8-5.3 11.1 0 19.6 5.4 8.5 5.3 13.3 16.1 5 10.8 5 27.4h-50.9q0.8 5.9 4 9.4 3.3 3.4 8.7 3.4 4.8 0 8.3-2.4 3.6-2.6 4.5-6.2l22.9 7.8q-2.6 8.2-8.4 13.3-5.7 5-12.8 7.2-7 2.1-13.8 2.1zm-13.2-52.1h24.1q-0.7-4.5-2.6-7-1.9-2.6-4.4-3.5-2.5-1.1-5.1-1.1-2.6 0-5.1 1.1-2.4 0.9-4.3 3.5-1.9 2.5-2.6 7z"/><path fill-rule="evenodd" class="b" d="m131.9 156.7c-35.7 0-64.5-28.8-64.5-64.5 0-35.6 28.8-64.4 64.5-64.4 35.6 0 64.5 28.8 64.5 64.4 0 35.7-28.9 64.5-64.5 64.5z"/><path fill-rule="evenodd" class="b" d="m132.3 241c-61 0-110.3-16.3-110.3-36.3 0-20.1 49.3-36.3 110.3-36.3 60.9 0 110.2 16.2 110.2 36.3 0 20-49.3 36.3-110.2 36.3z"/><path fill-rule="evenodd" class="a" d="m151.3 86.4c-7.1 0-12.8-5.8-12.8-12.8 0-7.1 5.7-12.9 12.8-12.9 7.1 0 12.8 5.8 12.8 12.9 0 7-5.7 12.8-12.8 12.8z"/></svg>
+      <span class="foot-logo" onclick="go('home')">Valearion</span>
       <ul class="foot-links">
-        <li><a onclick="go('how')">How it works</a></li>
-        <li><a onclick="go('platforms')">For platforms</a></li>
+        <li><a onclick="go('solutions')">Solutions</a></li>
+        <li><a onclick="go('works')">How it works</a></li>
+        <li><a onclick="go('ownlyme')">OwnlyMe</a></li>
+        <li><a onclick="go('devs')">Developers</a></li>
+        <li><a onclick="go('about')">About</a></li>
         <li><a onclick="go('contact')">Contact</a></li>
       </ul>
     </div>
     <div class="foot-bottom">
-      <span>Your identity. Finally.</span>
-      <span>© OwnlyMe 2026 · Privacy Policy · Terms</span>
+      <span>Identity infrastructure that doesn't need to hold your data to work.</span>
+      <span>© Valearion 2026</span>
     </div>
   </footer>
 </div>
 
 
-<!-- ════════════ FOR PLATFORMS ════════ -->
-<div class="page" id="page-platforms">
+<!-- ════════════════ OWNLYME ════════ -->
+<div class="page" id="page-ownlyme">
   <div class="page-hero">
-    <div class="page-hero-glow"></div>
-    <div class="ph-inner">
-      <span class="ph-label">For platforms</span>
-      <h1 class="ph-h">Your users are tired<br>of being asked.</h1>
-      <p class="ph-sub">OwnlyMe is the credential they carry. You embed it. They click through. Nothing stored on your side.</p>
+    <div class="page-hero-bg"></div>
+    <div class="page-hero-inner">
+      <span class="ph-label">OwnlyMe · A Valearion product</span>
+      <h1 class="ph-h">Verify once.<br><em>Use everywhere.</em></h1>
+      <p class="ph-sub">Verified once. Works everywhere. Lives on their device. Nothing stored anywhere else.</p>
     </div>
   </div>
 
-  <section class="fp-section">
-    <div class="fp-inner">
-      <span class="sec-label-light rv">What you get</span>
-      <h2 style="font-size:clamp(2rem,3vw,3rem); font-weight:700; letter-spacing:-.025em; color:#fff; margin-bottom:1rem;" class="rv">Drop-in. Zero liability. Live in days.</h2>
-      <div class="fp-grid rv">
-        <div class="fp-card">
-          <div class="fp-tag">Integration</div>
-          <h3>SDK or privacy sign-on</h3>
-          <p>Drop OwnlyMe into your existing onboarding flow via SDK or a single sign-on button. Works like OAuth — without the data exposure. One engineer. Under a week.</p>
+  <section class="sec light">
+    <div class="sec-inner">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:7rem; align-items:start;">
+        <div class="rv">
+          <span class="sec-label">For operators</span>
+          <h2 class="sec-h">Your users are tired<br>of being asked.</h2>
+          <p class="sec-body" style="margin-top:1.5rem;">Every verification step you add is a moment where a percentage of users decide it's not worth it. OwnlyMe eliminates that moment for returning users. They've already been through it. One click is all they need.</p>
+          <p class="sec-body" style="margin-top:1rem;">You embed OwnlyMe via SDK or privacy sign-on. Your users carry the credential. Nothing is stored on your infrastructure. No liability created.</p>
+          <div style="display:flex; gap:1rem; margin-top:2rem; flex-wrap:wrap;">
+            <button class="btn-line-dark" onclick="go('contact')">Talk to us about integration</button>
+            <a class="btn-solid" style="background:var(--navy); color:#fff;" href="https://ownlyme.id" target="_blank">Visit ownlyme.id →</a>
+          </div>
         </div>
-        <div class="fp-card">
-          <div class="fp-tag">Economics</div>
-          <h3>$0.25 per pulse</h3>
-          <p>First onboard $1–$5. Every subsequent verification $0.25. You're currently paying $15–$45 every time. The difference compounds at volume.</p>
+        <div class="rv rv2">
+          <div style="background:var(--navy); padding:3.5rem; color:#fff;">
+            <div style="font-family:var(--serif); font-size:2.5rem; font-weight:600; margin-bottom:3rem; letter-spacing:-.02em;">OwnlyMe</div>
+            <div style="border-bottom:1px solid rgba(255,255,255,.08); padding-bottom:2rem; margin-bottom:2rem;">
+              <div style="font-size:.65rem; letter-spacing:.16em; text-transform:uppercase; color:rgba(255,255,255,.3); margin-bottom:.5rem;">For users</div>
+              <div style="font-size:.95rem; color:rgba(255,255,255,.65);">Free. Always. Verify once. Use everywhere. Credential lives on your device.</div>
+            </div>
+            <div style="border-bottom:1px solid rgba(255,255,255,.08); padding-bottom:2rem; margin-bottom:2rem;">
+              <div style="font-size:.65rem; letter-spacing:.16em; text-transform:uppercase; color:rgba(255,255,255,.3); margin-bottom:.5rem;">For operators</div>
+              <div style="font-size:.95rem; color:rgba(255,255,255,.65);">Drop-in SDK. Zero data stored. $1–5 first onboard. $0.25 per verification pulse.</div>
+            </div>
+            <div>
+              <div style="font-size:.65rem; letter-spacing:.16em; text-transform:uppercase; color:rgba(255,255,255,.3); margin-bottom:.5rem;">Standards</div>
+              <div style="font-size:.95rem; color:rgba(255,255,255,.65);">W3C Verifiable Credentials. eIDAS 2.0 compatible. Credential stays on device.</div>
+            </div>
+          </div>
         </div>
-        <div class="fp-card">
-          <div class="fp-tag">Compliance</div>
-          <h3>Zero data liability</h3>
-          <p>Nothing stored on your infrastructure. You receive the compliance signal — verified or not. That's all you receive. That's all you're liable for.</p>
-        </div>
-        <div class="fp-card">
-          <div class="fp-tag">Conversion</div>
-          <h3>Returning users — one click</h3>
-          <p>Users who've already verified tap through. No form. No wait. No drop-off. The 40%+ abandonment rate disappears for OwnlyMe users.</p>
-        </div>
-      </div>
-      <div class="btn-group rv" style="margin-top:3rem;">
-        <button class="btn-green" onclick="go('contact')">Talk to us about integration</button>
-        <a class="btn-outline" href="https://valearion.com" target="_blank">Visit Valearion for full docs →</a>
       </div>
     </div>
   </section>
 
-  <section class="cta-section rv">
-    <div class="cta-inner">
-      <h2 class="cta-h">Ready to integrate?</h2>
-      <p class="cta-sub">Tell us about your platform. We'll send you sandbox access and integration docs within one business day.</p>
-      <div class="btn-group" style="justify-content:center;">
-        <button class="btn-black" onclick="go('contact')">Get in touch</button>
+  <section class="sec darker">
+    <div class="sec-inner">
+      <span class="sec-label rv">The user flow</span>
+      <h2 class="sec-h rv">How OwnlyMe works.</h2>
+      <div class="steps rv">
+        <div class="step"><div class="step-n">01</div><h3>Scan once</h3><p>User scans their ID through the OwnlyMe app or SDK. Takes under a minute. That is the last time anyone will ask them to do it.</p></div>
+        <div class="step"><div class="step-n">02</div><h3>Stored on device</h3><p>The verified credential lives on their device. Encrypted. Not on our servers. Not on yours. Anchored on-chain as a W3C verifiable credential.</p></div>
+        <div class="step"><div class="step-n">03</div><h3>One tap</h3><p>Any platform with OwnlyMe integrated. User taps to approve the specific claim being requested. Only what they approve is shared.</p></div>
+        <div class="step"><div class="step-n">04</div><h3>Nothing follows</h3><p>The platform received the answer. Not the file. Not the photo. Not the date of birth unless that was specifically requested.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-section">
+    <div class="cta-inner rv">
+      <h2 class="cta-h">OwnlyMe has<br><em>its own home.</em></h2>
+      <p class="cta-sub">The full OwnlyMe product lives at ownlyme.id — for users and platforms who want to understand it from the user perspective.</p>
+      <div class="cta-btns" style="margin-top:2.5rem;">
+        <a class="btn-solid" href="https://ownlyme.id" target="_blank">Visit ownlyme.id →</a>
+        <button class="btn-line" onclick="go('contact')">Talk to us about integration</button>
       </div>
     </div>
   </section>
 
   <footer>
     <div class="foot-inner">
-      <svg class="logo-svg-sm" onclick="go('home')" style="cursor:pointer;" version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 972 273"><style>.a{fill:#fff}.b{fill:#0fd663}
-/* ── PHOTO STEPS ── */
-.photo-steps {
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:1px;
-  background:rgba(23,23,23,.1);
-  margin-top:3rem;
-}
-.photo-step { overflow:hidden; }
-.photo-step-img {
-  height:280px;
-  background-size:cover;
-  background-position:center;
-  position:relative;
-  filter:grayscale(20%);
-  transition:filter .4s, transform .4s;
-}
-.photo-step:hover .photo-step-img { filter:grayscale(0%); transform:scale(1.02); }
-.ps-num {
-  position:absolute;
-  top:1.5rem; left:1.5rem;
-  background:var(--green);
-  color:var(--black);
-  width:32px; height:32px;
-  display:flex; align-items:center; justify-content:center;
-  font-size:.75rem; font-weight:700;
-  letter-spacing:.05em;
-}
-.ps-content {
-  background:#fff;
-  padding:2rem;
-}
-.ps-content h3 { font-size:1.2rem; font-weight:700; color:var(--black); margin-bottom:.5rem; }
-.ps-content p { font-size:.85rem; color:rgba(23,23,23,.55); line-height:1.65; }
-
-/* ── PLATFORMS PHOTO RIGHT ── */
-.plat-right-photo { overflow:hidden; }
-.prp-img {
-  height:240px;
-  background-size:cover;
-  background-position:center;
-  filter:grayscale(15%);
-  margin-bottom:1px;
-}
-.prp-stats { background:var(--black); padding:3rem; }
-.prp-stats .pr-stat { margin-bottom:2rem; padding-bottom:2rem; border-bottom:1px solid rgba(255,255,255,.07); }
-.prp-stats .pr-stat:last-child { border-bottom:none; margin-bottom:0; padding-bottom:0; }
-
-@media (max-width:900px) {
-  .photo-steps { grid-template-columns:1fr 1fr; }
-  .photo-step-img { height:200px; }
-}
-</style><path class="a" d="m343.1 177.9q-15.9 0-28.3-7.3-12.2-7.5-19.2-20.4-7-13-7-29.8 0-16.9 7-29.8 7-13 19.2-20.4 12.2-7.4 28.1-7.4 15.9 0 28 7.4 12.3 7.4 19.3 20.4 7 12.9 7 29.8 0 16.8-7 29.8-6.8 12.9-19 20.4-12.2 7.3-28.1 7.3zm0.1-27.1q7.7 0 13.6-3.8 6.1-4 9.4-10.8 3.4-6.9 3.4-15.8 0-8.9-3.5-15.8-3.4-6.9-9.5-10.8-5.9-4-13.7-4-7.8 0-13.9 4-5.9 3.9-9.4 10.8-3.4 6.8-3.4 15.8 0 8.9 3.5 15.8 3.5 6.8 9.5 10.8 6.1 3.8 14 3.8zm109.5 25.2h-25.5l-24.7-79.6h26.7l11.5 41.7 11.6-41.7h25.7l11.2 40.4 11.9-40.4h26.7l-24.8 79.6h-25.6l-12.3-45.9zm108.9 0h-26.1v-79.6h24.7l1 9.7q3.5-5.6 8.6-8.6 5.1-3 11.2-3 8.8 0 14.6 4 5.8 3.8 8.6 11.7 2.9 8 2.9 20.3v45.5h-26.1v-40.7q0-4.7-1.1-7.5-0.8-3.1-2.7-4.6-1.8-1.6-4.5-1.8-5.5-0.3-8.3 2.7-2.8 3-2.8 9.6zm84 0h-26.1v-111.5h26.1zm34.8 33.7q-5.1 0-10.7-2-5.7-2.3-9-4.7l9.7-23q1.6 1.4 3.3 2.3 1.9 0.8 3.5 0.8 2.4 0 4.4-1.2 2.2-1.3 3.3-4.3l1.2-3.2-34.2-78.1h29.1l16.9 46.1 15.4-46.1h29l-31.2 82.5q-3.4 9-7 16-3.6 7-9.1 11-5.4 3.9-14.6 3.9z"/><path class="b" d="m778.6 176h-26.9v-111.5h29.8l24.6 39.8 24.5-39.8h29.8v111.5h-26.9v-65.9l-27.3 43.6-27.6-43.6zm133.7 1.9q-11.8 0-20.9-5.3-9.2-5.2-14.4-14.6-5.1-9.4-5.1-21.9 0-12.4 5.1-21.8 5.1-9.4 14.1-14.6 9-5.3 20.8-5.3 11.1 0 19.6 5.4 8.5 5.3 13.3 16.1 5 10.8 5 27.4h-50.9q0.8 5.9 4 9.4 3.3 3.4 8.7 3.4 4.8 0 8.3-2.4 3.6-2.6 4.5-6.2l22.9 7.8q-2.6 8.2-8.4 13.3-5.7 5-12.8 7.2-7 2.1-13.8 2.1zm-13.2-52.1h24.1q-0.7-4.5-2.6-7-1.9-2.6-4.4-3.5-2.5-1.1-5.1-1.1-2.6 0-5.1 1.1-2.4 0.9-4.3 3.5-1.9 2.5-2.6 7z"/><path fill-rule="evenodd" class="b" d="m131.9 156.7c-35.7 0-64.5-28.8-64.5-64.5 0-35.6 28.8-64.4 64.5-64.4 35.6 0 64.5 28.8 64.5 64.4 0 35.7-28.9 64.5-64.5 64.5z"/><path fill-rule="evenodd" class="b" d="m132.3 241c-61 0-110.3-16.3-110.3-36.3 0-20.1 49.3-36.3 110.3-36.3 60.9 0 110.2 16.2 110.2 36.3 0 20-49.3 36.3-110.2 36.3z"/><path fill-rule="evenodd" class="a" d="m151.3 86.4c-7.1 0-12.8-5.8-12.8-12.8 0-7.1 5.7-12.9 12.8-12.9 7.1 0 12.8 5.8 12.8 12.9 0 7-5.7 12.8-12.8 12.8z"/></svg>
+      <span class="foot-logo" onclick="go('home')">Valearion</span>
       <ul class="foot-links">
-        <li><a onclick="go('how')">How it works</a></li>
-        <li><a onclick="go('platforms')">For platforms</a></li>
+        <li><a onclick="go('solutions')">Solutions</a></li>
+        <li><a onclick="go('works')">How it works</a></li>
+        <li><a onclick="go('ownlyme')">OwnlyMe</a></li>
+        <li><a onclick="go('devs')">Developers</a></li>
+        <li><a onclick="go('about')">About</a></li>
         <li><a onclick="go('contact')">Contact</a></li>
       </ul>
     </div>
     <div class="foot-bottom">
-      <span>Your identity. Finally.</span>
-      <span>© OwnlyMe 2026 · Privacy Policy · Terms</span>
+      <span>Identity infrastructure that doesn't need to hold your data to work.</span>
+      <span>© Valearion 2026</span>
     </div>
   </footer>
 </div>
 
 
-<!-- ════════════ CONTACT ════════ -->
+<!-- ════════════════ DEVELOPERS ═══════ -->
+<div class="page" id="page-devs">
+  <div class="page-hero">
+    <div class="page-hero-bg"></div>
+    <div class="page-hero-inner">
+      <span class="ph-label">Developers</span>
+      <h1 class="ph-h">Drop-in SDK.<br><em>Live in days.</em></h1>
+      <p class="ph-sub">One engineer. One week. No infrastructure rebuild. We designed the integration to be that simple.</p>
+    </div>
+  </div>
+
+  <section class="sec darker">
+    <div class="sec-inner">
+      <div class="dev-grid rv">
+        <div class="dev-card">
+          <div class="dev-tag">SDK</div>
+          <h3>Mobile and Web</h3>
+          <p>iOS, Android, React Native, Flutter. Web SDK for vanilla JS and React. Drop into your existing onboarding flow. Full white-label available.</p>
+          <div class="code"><span class="g">import</span> { OwnlyMe } <span class="g">from</span> '@valearion/sdk';<br><br><span class="g">const</span> result = <span class="g">await</span> OwnlyMe.verify({<br>&nbsp;&nbsp;claims: [<span class="g">'age_18_plus'</span>],<br>&nbsp;&nbsp;onSuccess: (proof) => handle(proof)<br>});</div>
+        </div>
+        <div class="dev-card">
+          <div class="dev-tag">REST API</div>
+          <h3>Direct Integration</h3>
+          <p>Verification requests, result polling, webhook callbacks. Full API reference. Sandbox environment available from day one.</p>
+          <div class="code"><span class="g">POST</span> /v1/verify<br><span class="d">Authorization: Bearer {key}</span><br><br>{<br>&nbsp;&nbsp;<span class="g">"claims"</span>: [<span class="g">"age_18_plus"</span>],<br>&nbsp;&nbsp;<span class="g">"session_id"</span>: <span class="g">"sess_abc"</span><br>}</div>
+        </div>
+        <div class="dev-card">
+          <div class="dev-tag">Sign-on</div>
+          <h3>Privacy Sign-on</h3>
+          <p>One button. User approves from their OwnlyMe wallet. Your platform receives the compliance signal. Works like OAuth — without the data exposure.</p>
+          <div class="code">&lt;<span class="g">OwnlyMeButton</span><br>&nbsp;&nbsp;claims={[<span class="g">'age_18_plus'</span>]}<br>&nbsp;&nbsp;onVerified={handler}<br>&nbsp;&nbsp;theme=<span class="g">"light"</span><br>/&gt;</div>
+        </div>
+        <div class="dev-card">
+          <div class="dev-tag">Webhooks</div>
+          <h3>Real-time Callbacks</h3>
+          <p>Verification events, re-verification triggers, credential expiry. Delivered to your endpoint in real time. Signed and verified.</p>
+          <div class="code"><span class="g">POST</span> your-endpoint.com/hook<br><br>{<br>&nbsp;&nbsp;<span class="g">"event"</span>: <span class="g">"verification.complete"</span>,<br>&nbsp;&nbsp;<span class="g">"result"</span>: <span class="g">"verified"</span>,<br>&nbsp;&nbsp;<span class="g">"claims"</span>: {<span class="g">"age_18_plus"</span>: <span class="g">true</span>}<br>}</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec light">
+    <div class="sec-inner">
+      <span class="sec-label rv">Timeline</span>
+      <h2 class="sec-h rv">What integration actually looks like.</h2>
+      <div class="timeline rv">
+        <div class="tl-step"><div class="tl-n">01</div><h3>API keys</h3><p>Sandbox credentials issued same day. Start testing immediately.</p></div>
+        <div class="tl-step"><div class="tl-n">02</div><h3>SDK install</h3><p>One npm install or pod install. Drop into your onboarding flow.</p></div>
+        <div class="tl-step"><div class="tl-n">03</div><h3>Configure claims</h3><p>Select what your platform needs. Age, KYC, AML. Nothing more shared.</p></div>
+        <div class="tl-step"><div class="tl-n">04</div><h3>Go live</h3><p>Production keys. Webhook config. Typically under one week.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-section">
+    <div class="cta-inner rv">
+      <h2 class="cta-h">Ready to start?</h2>
+      <p class="cta-sub">Talk to us and we'll get you sandbox access and full documentation.</p>
+      <div class="cta-btns" style="margin-top:2.5rem;">
+        <button class="btn-solid" onclick="go('contact')">Get API access</button>
+        <button class="btn-line" onclick="go('contact')">Talk to an engineer</button>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="foot-inner">
+      <span class="foot-logo" onclick="go('home')">Valearion</span>
+      <ul class="foot-links">
+        <li><a onclick="go('solutions')">Solutions</a></li>
+        <li><a onclick="go('works')">How it works</a></li>
+        <li><a onclick="go('ownlyme')">OwnlyMe</a></li>
+        <li><a onclick="go('devs')">Developers</a></li>
+        <li><a onclick="go('about')">About</a></li>
+        <li><a onclick="go('contact')">Contact</a></li>
+      </ul>
+    </div>
+    <div class="foot-bottom">
+      <span>Identity infrastructure that doesn't need to hold your data to work.</span>
+      <span>© Valearion 2026</span>
+    </div>
+  </footer>
+</div>
+
+
+<!-- ════════════════ ABOUT ═══════════ -->
+<div class="page" id="page-about">
+  <div class="page-hero">
+    <div class="page-hero-bg"></div>
+    <div class="page-hero-inner">
+      <span class="ph-label">About</span>
+      <h1 class="ph-h">We built this because<br>the alternative was<br><em>unacceptable.</em></h1>
+    </div>
+  </div>
+
+  <section class="sec light">
+    <div class="sec-inner" style="max-width:800px;">
+      <span class="sec-label rv">The mission</span>
+      <h2 class="sec-h rv">Identity infrastructure that actually protects the people it's supposed to serve.</h2>
+      <p class="sec-body rv" style="margin-top:2rem; font-size:1.05rem; line-height:1.9;">The compliance infrastructure that exists today was designed around collection. Every verification creates a record. Every record is a liability. Every liability creates pressure to do the minimum instead of the right thing.</p>
+      <p class="sec-body rv" style="margin-top:1.5rem; font-size:1.05rem; line-height:1.9;">Valearion was built on a different premise. Institutions should be able to verify what they need to verify without storing what they don't need to store. Users should be able to prove what they need to prove without handing over everything they own.</p>
+      <p class="sec-body rv" style="margin-top:1.5rem; font-size:1.05rem; line-height:1.9;">These are not competing goals. They are the same goal.</p>
+    </div>
+  </section>
+
+  <section class="sec light" style="padding-top:0; background:var(--off);">
+    <div class="sec-inner">
+    </div>
+  </section>
+
+
+  <section class="sec darker">
+    <div class="sec-inner">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:1px; background:rgba(255,255,255,.06);">
+        <div style="background:var(--navy-d); padding:4rem;" class="rv">
+          <span class="sec-label">Vision</span>
+          <h2 class="sec-h" style="font-size:1.8rem; margin-top:1rem;">A world where proving who you are doesn't require handing over everything you own.</h2>
+          <p style="margin-top:1.5rem; font-size:.9rem; color:rgba(255,255,255,.4); line-height:1.8;">Verification and privacy are not opposing forces. They are the same requirement approached from different directions. Valearion is the infrastructure that resolves them.</p>
+        </div>
+        <div style="background:var(--navy-d); padding:4rem;" class="rv rv1">
+          <span class="sec-label">Careers</span>
+          <h2 class="sec-h" style="font-size:1.8rem; margin-top:1rem;">We're building the identity infrastructure layer for the next decade of regulated platforms.</h2>
+          <p style="margin-top:1.5rem; font-size:.9rem; color:rgba(255,255,255,.4); line-height:1.8;">If you work in compliance engineering, privacy architecture, regulatory technology, or enterprise sales in regulated markets — we want to talk.</p>
+          <div style="margin-top:2rem;">
+            <button class="btn-line" onclick="go('contact')" style="font-size:.75rem;">Get in touch →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-section">
+    <div class="cta-inner rv">
+      <h2 class="cta-h">Work with us.</h2>
+      <p class="cta-sub">If you're an operator, investor, or regulator who wants to understand the model — we're ready to talk.</p>
+      <div class="cta-btns" style="margin-top:2.5rem;">
+        <button class="btn-solid" onclick="go('contact')">Get in touch</button>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="foot-inner">
+      <span class="foot-logo" onclick="go('home')">Valearion</span>
+      <ul class="foot-links">
+        <li><a onclick="go('solutions')">Solutions</a></li>
+        <li><a onclick="go('works')">How it works</a></li>
+        <li><a onclick="go('ownlyme')">OwnlyMe</a></li>
+        <li><a onclick="go('devs')">Developers</a></li>
+        <li><a onclick="go('about')">About</a></li>
+        <li><a onclick="go('contact')">Contact</a></li>
+      </ul>
+    </div>
+    <div class="foot-bottom">
+      <span>Identity infrastructure that doesn't need to hold your data to work.</span>
+      <span>© Valearion 2026 · Privacy Policy · Terms</span>
+    </div>
+  </footer>
+</div>
+
+
+<!-- ════════════════ CONTACT ═════════ -->
 <div class="page" id="page-contact">
   <div class="page-hero">
-    <div class="page-hero-glow"></div>
-    <div class="ph-inner">
-      <span class="ph-label">Get started</span>
-      <h1 class="ph-h">Get OwnlyMe.<br>It's free.</h1>
-      <p class="ph-sub">For users — get access. For platforms — talk to us about integration.</p>
+    <div class="page-hero-bg"></div>
+    <div class="page-hero-inner">
+      <span class="ph-label">Contact</span>
+      <h1 class="ph-h">Let's talk.</h1>
+      <p class="ph-sub">Tell us about your platform and what you're trying to solve. We'll come with a cost comparison and integration timeline.</p>
     </div>
   </div>
 
-  <section class="contact-section">
-    <div class="contact-inner rv">
-      <form onsubmit="submitForm(event)">
-        <label class="cf-label">Your name</label>
-        <input class="cf-input" type="text" placeholder="Full name" required>
-        <label class="cf-label">Email</label>
-        <input class="cf-input" type="email" placeholder="you@email.com" required>
-        <label class="cf-label">I am</label>
-        <select class="cf-select">
-          <option value="">Select one</option>
-          <option>A user who wants OwnlyMe</option>
-          <option>A platform exploring integration</option>
-          <option>A developer</option>
-          <option>Other</option>
-        </select>
-        <label class="cf-label">Anything else?</label>
-        <textarea class="cf-ta" placeholder="Optional — tell us more about what you need..."></textarea>
-        <button type="submit" class="cf-submit">Send</button>
-        <div class="form-ok" id="formOk">Done. We'll be in touch within one business day.</div>
-      </form>
-      <div class="rv rv2">
-        <div class="ci-item">
-          <div class="ci-label">For users</div>
-          <div class="ci-val">OwnlyMe is free. Always. No subscription for privacy.</div>
-        </div>
-        <div class="ci-item">
-          <div class="ci-label">For platforms</div>
-          <div class="ci-val">Drop-in SDK. Sandbox access within one business day. Full docs included.</div>
-        </div>
-        <div class="ci-item">
-          <div class="ci-label">Response time</div>
-          <div class="ci-val">Within one business day. Usually faster.</div>
-        </div>
-        <div class="ci-item">
-          <div class="ci-label">Built by</div>
-          <div class="ci-val"><a href="https://valearion.com" target="_blank" style="color:var(--green); text-decoration:none;">Valearion</a> — identity infrastructure for regulated platforms.</div>
+  <section class="sec darker">
+    <div class="sec-inner">
+      <div class="contact-grid rv">
+        <form onsubmit="submitForm(event)">
+          <label class="cf-label">Your name</label>
+          <input class="cf-input" type="text" placeholder="Full name" required>
+          <label class="cf-label">Work email</label>
+          <input class="cf-input" type="email" placeholder="name@company.com" required>
+          <label class="cf-label">Company</label>
+          <input class="cf-input" type="text" placeholder="Company name">
+          <label class="cf-label">Platform type</label>
+          <select class="cf-select">
+            <option value="">Select one</option>
+            <option>Gaming platform</option>
+            <option>Fintech / Bank</option>
+            <option>Age-gated platform</option>
+            <option>Government / Public sector</option>
+            <option>Investor</option>
+            <option>Other</option>
+          </select>
+          <label class="cf-label">What are you trying to solve?</label>
+          <textarea class="cf-ta" placeholder="Tell us about your current verification setup and what's not working..."></textarea>
+          <button type="submit" class="cf-submit">Send message</button>
+          <div class="form-ok" id="formOk">Message sent. We'll be in touch within one business day — usually faster.</div>
+        </form>
+        <div class="contact-info rv rv2">
+          <div class="ci-item"><div class="ci-label">Response time</div><div class="ci-val">Within one business day. Usually faster.</div></div>
+          <div class="ci-item"><div class="ci-label">What to expect</div><div class="ci-val">A call with someone who can answer technical questions. No SDR handoffs.</div></div>
+          <div class="ci-item"><div class="ci-label">We'll bring</div><div class="ci-val">A cost comparison against your current stack. An integration timeline. Answers.</div></div>
+          <div class="ci-item"><div class="ci-label">Pilots</div><div class="ci-val">Contracts signed Q2 2026. Pilots live Q3 2026. If you want to be in the first cohort, now is the time.</div></div>
+          <div class="ci-item"><div class="ci-label">Data room</div><div class="ci-val">Available to qualified investors and operators on request.</div></div>
         </div>
       </div>
     </div>
@@ -1341,108 +1763,80 @@ footer {
 
   <footer>
     <div class="foot-inner">
-      <svg class="logo-svg-sm" onclick="go('home')" style="cursor:pointer;" version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 972 273"><style>.a{fill:#fff}.b{fill:#0fd663}
-/* ── PHOTO STEPS ── */
-.photo-steps {
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:1px;
-  background:rgba(23,23,23,.1);
-  margin-top:3rem;
-}
-.photo-step { overflow:hidden; }
-.photo-step-img {
-  height:280px;
-  background-size:cover;
-  background-position:center;
-  position:relative;
-  filter:grayscale(20%);
-  transition:filter .4s, transform .4s;
-}
-.photo-step:hover .photo-step-img { filter:grayscale(0%); transform:scale(1.02); }
-.ps-num {
-  position:absolute;
-  top:1.5rem; left:1.5rem;
-  background:var(--green);
-  color:var(--black);
-  width:32px; height:32px;
-  display:flex; align-items:center; justify-content:center;
-  font-size:.75rem; font-weight:700;
-  letter-spacing:.05em;
-}
-.ps-content {
-  background:#fff;
-  padding:2rem;
-}
-.ps-content h3 { font-size:1.2rem; font-weight:700; color:var(--black); margin-bottom:.5rem; }
-.ps-content p { font-size:.85rem; color:rgba(23,23,23,.55); line-height:1.65; }
-
-/* ── PLATFORMS PHOTO RIGHT ── */
-.plat-right-photo { overflow:hidden; }
-.prp-img {
-  height:240px;
-  background-size:cover;
-  background-position:center;
-  filter:grayscale(15%);
-  margin-bottom:1px;
-}
-.prp-stats { background:var(--black); padding:3rem; }
-.prp-stats .pr-stat { margin-bottom:2rem; padding-bottom:2rem; border-bottom:1px solid rgba(255,255,255,.07); }
-.prp-stats .pr-stat:last-child { border-bottom:none; margin-bottom:0; padding-bottom:0; }
-
-@media (max-width:900px) {
-  .photo-steps { grid-template-columns:1fr 1fr; }
-  .photo-step-img { height:200px; }
-}
-</style><path class="a" d="m343.1 177.9q-15.9 0-28.3-7.3-12.2-7.5-19.2-20.4-7-13-7-29.8 0-16.9 7-29.8 7-13 19.2-20.4 12.2-7.4 28.1-7.4 15.9 0 28 7.4 12.3 7.4 19.3 20.4 7 12.9 7 29.8 0 16.8-7 29.8-6.8 12.9-19 20.4-12.2 7.3-28.1 7.3zm0.1-27.1q7.7 0 13.6-3.8 6.1-4 9.4-10.8 3.4-6.9 3.4-15.8 0-8.9-3.5-15.8-3.4-6.9-9.5-10.8-5.9-4-13.7-4-7.8 0-13.9 4-5.9 3.9-9.4 10.8-3.4 6.8-3.4 15.8 0 8.9 3.5 15.8 3.5 6.8 9.5 10.8 6.1 3.8 14 3.8zm109.5 25.2h-25.5l-24.7-79.6h26.7l11.5 41.7 11.6-41.7h25.7l11.2 40.4 11.9-40.4h26.7l-24.8 79.6h-25.6l-12.3-45.9zm108.9 0h-26.1v-79.6h24.7l1 9.7q3.5-5.6 8.6-8.6 5.1-3 11.2-3 8.8 0 14.6 4 5.8 3.8 8.6 11.7 2.9 8 2.9 20.3v45.5h-26.1v-40.7q0-4.7-1.1-7.5-0.8-3.1-2.7-4.6-1.8-1.6-4.5-1.8-5.5-0.3-8.3 2.7-2.8 3-2.8 9.6zm84 0h-26.1v-111.5h26.1zm34.8 33.7q-5.1 0-10.7-2-5.7-2.3-9-4.7l9.7-23q1.6 1.4 3.3 2.3 1.9 0.8 3.5 0.8 2.4 0 4.4-1.2 2.2-1.3 3.3-4.3l1.2-3.2-34.2-78.1h29.1l16.9 46.1 15.4-46.1h29l-31.2 82.5q-3.4 9-7 16-3.6 7-9.1 11-5.4 3.9-14.6 3.9z"/><path class="b" d="m778.6 176h-26.9v-111.5h29.8l24.6 39.8 24.5-39.8h29.8v111.5h-26.9v-65.9l-27.3 43.6-27.6-43.6zm133.7 1.9q-11.8 0-20.9-5.3-9.2-5.2-14.4-14.6-5.1-9.4-5.1-21.9 0-12.4 5.1-21.8 5.1-9.4 14.1-14.6 9-5.3 20.8-5.3 11.1 0 19.6 5.4 8.5 5.3 13.3 16.1 5 10.8 5 27.4h-50.9q0.8 5.9 4 9.4 3.3 3.4 8.7 3.4 4.8 0 8.3-2.4 3.6-2.6 4.5-6.2l22.9 7.8q-2.6 8.2-8.4 13.3-5.7 5-12.8 7.2-7 2.1-13.8 2.1zm-13.2-52.1h24.1q-0.7-4.5-2.6-7-1.9-2.6-4.4-3.5-2.5-1.1-5.1-1.1-2.6 0-5.1 1.1-2.4 0.9-4.3 3.5-1.9 2.5-2.6 7z"/><path fill-rule="evenodd" class="b" d="m131.9 156.7c-35.7 0-64.5-28.8-64.5-64.5 0-35.6 28.8-64.4 64.5-64.4 35.6 0 64.5 28.8 64.5 64.4 0 35.7-28.9 64.5-64.5 64.5z"/><path fill-rule="evenodd" class="b" d="m132.3 241c-61 0-110.3-16.3-110.3-36.3 0-20.1 49.3-36.3 110.3-36.3 60.9 0 110.2 16.2 110.2 36.3 0 20-49.3 36.3-110.2 36.3z"/><path fill-rule="evenodd" class="a" d="m151.3 86.4c-7.1 0-12.8-5.8-12.8-12.8 0-7.1 5.7-12.9 12.8-12.9 7.1 0 12.8 5.8 12.8 12.9 0 7-5.7 12.8-12.8 12.8z"/></svg>
+      <span class="foot-logo" onclick="go('home')">Valearion</span>
       <ul class="foot-links">
-        <li><a onclick="go('how')">How it works</a></li>
-        <li><a onclick="go('platforms')">For platforms</a></li>
-        <li><a href="https://valearion.com" target="_blank">Valearion</a></li>
+        <li><a onclick="go('solutions')">Solutions</a></li>
+        <li><a onclick="go('works')">How it works</a></li>
+        <li><a onclick="go('ownlyme')">OwnlyMe</a></li>
+        <li><a onclick="go('devs')">Developers</a></li>
+        <li><a onclick="go('about')">About</a></li>
+        <li><a onclick="go('contact')">Contact</a></li>
       </ul>
     </div>
     <div class="foot-bottom">
-      <span>Your identity. Finally.</span>
-      <span>© OwnlyMe 2026 · Privacy Policy · Terms</span>
+      <span>Identity infrastructure that doesn't need to hold your data to work.</span>
+      <span>© Valearion 2026 · Privacy Policy · Terms</span>
     </div>
   </footer>
 </div>
 
 
 <script>
-// NAV
-window.addEventListener('scroll', () => document.getElementById('nav').classList.toggle('solid', scrollY > 20));
+// ── NAV ──
+window.addEventListener('scroll', () => document.getElementById('nav').classList.toggle('solid', scrollY>20));
+
+// ── NAV TOGGLE ──
 function toggleNav() { document.getElementById('navLinks').classList.toggle('open'); }
 
-// PAGE NAV
+// ── PAGE NAV ──
 function go(id) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById('page-' + id).classList.add('active');
-  window.scrollTo({ top: 0, behavior: 'instant' });
+  document.getElementById('page-'+id).classList.add('active');
+  window.scrollTo({top:0, behavior:'instant'});
+  document.querySelectorAll('[data-p]').forEach(a => a.classList.toggle('active', a.dataset.p===id));
   document.getElementById('navLinks').classList.remove('open');
   setTimeout(initReveal, 80);
 }
 
-// REVEAL
+function goSolution(id) {
+  go('solutions');
+  setTimeout(() => {
+    document.querySelectorAll('.sol-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.sol-pane').forEach(p => p.classList.remove('active'));
+    const tabMap = {gaming:0, fintech:1, age:2, gov:3};
+    document.querySelectorAll('.sol-tab')[tabMap[id]].classList.add('active');
+    document.getElementById('sp-'+id).classList.add('active');
+  }, 100);
+}
+
+// ── SOLUTIONS TABS ──
+function solTab(id, el) {
+  document.querySelectorAll('.sol-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.sol-pane').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('sp-'+id).classList.add('active');
+}
+
+// ── SCROLL REVEAL ──
 const ro = new IntersectionObserver(entries => {
-  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
-}, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('in'); });
+}, { threshold:0.08, rootMargin:'0px 0px -30px 0px' });
 
 function initReveal() {
   document.querySelectorAll('.page.active .rv').forEach(el => {
     el.classList.remove('in');
     ro.observe(el);
     const r = el.getBoundingClientRect();
-    if (r.top < window.innerHeight) el.classList.add('in');
+    if(r.top < window.innerHeight) el.classList.add('in');
   });
 }
 initReveal();
 
-// FORM
+// ── FORM ──
 function submitForm(e) {
   e.preventDefault();
-  e.target.style.display = 'none';
-  document.getElementById('formOk').style.display = 'block';
+  e.target.style.display='none';
+  document.getElementById('formOk').style.display='block';
 }
 </script>
 </body>
