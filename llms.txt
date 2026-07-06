@@ -1,0 +1,19 @@
+# OwnlyMe
+
+> OwnlyMe is a privacy-first identity app. A person verifies their identity once, carries a credential that lives only on their phone, and proves exactly what a platform asks with a single tap while sharing nothing else. Verification happens on the device, documents are never uploaded, and OwnlyMe holds no copy of the user's data. OwnlyMe is free for every person and is a product of Valearion.
+
+The core idea: prove who you are while revealing nothing else. A platform receives only the answer it asked for, a yes or a no, never the document behind it. The credential is stored on the user's device, encrypted, and controlled only by the user. There is no central database of users to leak, sell, or subpoena.
+
+Common questions:
+- Is it free? Yes, free for every person, forever.
+- Where is data stored? On the user's phone, encrypted. Not on OwnlyMe servers or on platforms.
+- Can OwnlyMe see your documents? No, verification runs on the device.
+- How is it different from a Google login? A Google login shares who you are and tracks where you go. OwnlyMe proves only one requested fact and tracks nothing.
+
+For platforms, OwnlyMe drops into onboarding via SDK or a sign-on button, so returning users verify in one tap and the platform stores no documents. The underlying infrastructure and commercial terms are handled by Valearion (https://valearion.com/).
+
+## Pages
+- Home: https://ownlyme.com/
+- How it works: https://ownlyme.com/how-it-works.html
+- For platforms: https://ownlyme.com/for-platforms.html
+- Get started: https://ownlyme.com/get-started.html
